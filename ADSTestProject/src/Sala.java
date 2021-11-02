@@ -79,5 +79,27 @@ public class Sala {
 	boolean videoconferencia;
 	@CsvBindByPosition(position = 34)
 	boolean atrio;
+	
+	@Override
+	public String toString() {
+		return "Sala [edificio=" + edificio + ", nome=" + nome + ", capacidadeNormal=" + capacidadeNormal
+				+ ", capacidadeExame=" + capacidadeExame + ", nCaracteristicas=" + nCaracteristicas
+				+ ", anfiteatroAulas=" + anfiteatroAulas + ", apoioTecnicoEventos=" + apoioTecnicoEventos + ", Arq1="
+				+ Arq1 + ", Arq2=" + Arq2 + ", Arq3=" + Arq3 + ", Arq4=" + Arq4 + ", Arq5=" + Arq5 + ", Arq6=" + Arq6
+				+ ", Arq9=" + Arq9 + ", BYOD=" + BYOD + ", focusGroup=" + focusGroup
+				+ ", horarioSalaVisivelPortalPublico=" + horarioSalaVisivelPortalPublico
+				+ ", laboratorioDeArquitecturaDeComputadoresI=" + laboratorioDeArquitecturaDeComputadoresI
+				+ ", laboratorioDeArquitecturaDeComputadoresII=" + laboratorioDeArquitecturaDeComputadoresII
+				+ ", laboratorioDeBasesDeEngenharia=" + laboratorioDeBasesDeEngenharia + ", laboratorioDeElectronica="
+				+ laboratorioDeElectronica + ", laboratorioDeInformatica=" + laboratorioDeInformatica
+				+ ", laboratorioDeJornalismo=" + laboratorioDeJornalismo + ", laboratorioDeRedesDeComputadoresI="
+				+ laboratorioDeRedesDeComputadoresI + ", laboratorioDeRedesDeComputadoresII="
+				+ laboratorioDeRedesDeComputadoresII + ", laboratorioDeTelecomunicacoes="
+				+ laboratorioDeTelecomunicacoes + ", salaAulasMestrado=" + salaAulasMestrado
+				+ ", salaAulasMestradoPlus=" + salaAulasMestradoPlus + ", salaNEE=" + salaNEE + ", salaProvas="
+				+ salaProvas + ", salaReuniao=" + salaReuniao + ", salaDeArquitectura=" + salaDeArquitectura
+				+ ", salaDeAulasNormal=" + salaDeAulasNormal + ", videoconferencia=" + videoconferencia + ", atrio="
+				+ atrio + "]";
+	}
 
 }
