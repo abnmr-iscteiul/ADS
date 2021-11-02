@@ -17,4 +17,5 @@ public enum Edificio {
 	public String toString() {
 		return nome;
 	}
+
 }
