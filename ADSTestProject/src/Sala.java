@@ -26,7 +26,7 @@ public class Sala {
 	boolean laboratorioDeJornalismo;
 	boolean laboratorioDeRedesDeComputadoresI;
 	boolean laboratorioDeRedesDeComputadoresII;
-	boolean laboratorioDeTelecomunicaçoes;
+	boolean laboratorioDeTelecomunicacoes;
 	boolean salaAulasMestrado;
 	boolean salaAulasMestradoPlus;
 	boolean salaNEE;
