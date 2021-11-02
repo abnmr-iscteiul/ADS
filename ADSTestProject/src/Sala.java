@@ -3,18 +3,18 @@ import com.opencsv.bean.CsvBindByPosition;
 public class Sala {
 
 	@CsvBindByPosition(position = 0)
-	String edificio;
+	private String edificio;
 	
 	@CsvBindByPosition(position = 1)
-	String nome;
+	private String nome;
 	
 	@CsvBindByPosition(position = 2)
-	int capacidadeNormal;
+	private String capacidadeNormal;
 	
 	@CsvBindByPosition(position = 3)
-	int capacidadeExame;
+	private String capacidadeExame;
 	
-	@CsvBindByPosition(position = 4)
+	@CsvBindByPosition(position = 4) 
 	int nCaracteristicas;
 	
 	@CsvBindByPosition(position = 5)
@@ -93,13 +93,7 @@ public class Sala {
 				+ ", laboratorioDeBasesDeEngenharia=" + laboratorioDeBasesDeEngenharia + ", laboratorioDeElectronica="
 				+ laboratorioDeElectronica + ", laboratorioDeInformatica=" + laboratorioDeInformatica
 				+ ", laboratorioDeJornalismo=" + laboratorioDeJornalismo + ", laboratorioDeRedesDeComputadoresI="
-				+ laboratorioDeRedesDeComputadoresI + ", laboratorioDeRedesDeComputadoresII="
-				+ laboratorioDeRedesDeComputadoresII + ", laboratorioDeTelecomunicacoes="
-				+ laboratorioDeTelecomunicacoes + ", salaAulasMestrado=" + salaAulasMestrado
-				+ ", salaAulasMestradoPlus=" + salaAulasMestradoPlus + ", salaNEE=" + salaNEE + ", salaProvas="
-				+ salaProvas + ", salaReuniao=" + salaReuniao + ", salaDeArquitectura=" + salaDeArquitectura
-				+ ", salaDeAulasNormal=" + salaDeAulasNormal + ", videoconferencia=" + videoconferencia + ", atrio="
-				+ atrio + "]";
+		 + "]";
 	}
 
 }

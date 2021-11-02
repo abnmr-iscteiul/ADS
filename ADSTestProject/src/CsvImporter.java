@@ -2,45 +2,77 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
-import com.opencsv.bean.CsvToBeanBuilder;
 
-
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class CsvImporter {
 
-    public static void main(String[] args) throws IOException, CsvException {
+	public static void main(String[] args) throws IOException, CsvException {
+		String fileName = "D:\\ADS\\backer.csv";
 
-        //String fileName = "/Users/chainz/Desktop/ADS - Caracterizacao das salas.csv";
-    	String fileName = "C:/ADS-Caracterizacao Salas.csv";
-    	/*
-    	//CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
-    	@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<Sala> beans = new CsvToBeanBuilder(new FileReader(fileName))
-                .withType(Sala.class)
-                .build()
-                .parse();
+		modifyFile(fileName);
 
-        beans.forEach(x -> System.out.println(x));
-        */
+		List<Sala> beans = new CsvToBeanBuilder<Sala>(new FileReader(fileName))
+				.withSkipLines(1)
+				.withSeparator(';')
+				.withType(Sala.class)
+				.build()
+				.parse();
 
-        
-        
-        
-        CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
-        try(CSVReader reader = new CSVReaderBuilder(
-                new FileReader(fileName))
-                .withCSVParser(csvParser)   // custom CSV parser
-                //.withSkipLines(1)           // skip the first line, header info
-                .build()){
-            List<String[]> r = reader.readAll();
-            r.forEach(x -> System.out.println(Arrays.toString(x)));
-        }
-    }
+		System.out.println(beans.size());
+		for (int i = 0; i < beans.size(); i++) {
+			System.out.println(beans.get(i).toString());
+		}
+		
+	}
+
+	public static void modifyFile(String filePath) throws IOException, CsvException {
+		
+
+		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
+		try (CSVReader reader = new CSVReaderBuilder(new FileReader(filePath)).withCSVParser(csvParser) 
+				.build()) {
+			
+			List<String[]> r = reader.readAll();
+			//CSVWriter writer = new CSVWriter(new FileWriter(filePath));
+			CSVWriter writer = new CSVWriter(new FileWriter(filePath), ';',
+                    CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                    CSVWriter.DEFAULT_LINE_END);
+
+			// r.forEach(x -> System.out.println(Arrays.toString(x)));
+			for (int i = 0; i < r.size(); i++) {
+				for (int j = 0; j < r.get(i).length; j++) {
+					if (r.get(i)[j].equals("")) {
+						r.get(i)[j] = "false";
+
+					} else if (r.get(i)[j].equals("X")) {
+						r.get(i)[j] = "true";
+					}
+				}
+				//System.out.println(Arrays.toString(r.get(i)));
+				writer.writeNext(r.get(i));
+
+
+			}
+			//r.forEach(x -> System.out.println(Arrays.toString(x)));
+			writer.close();
+		}
+
+		
+		
+	}
+
+
 
 }
