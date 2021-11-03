@@ -5,6 +5,8 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
+
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,11 +15,11 @@ import java.util.List;
 public class CsvImporter {
 
 	public static void main(String[] args) throws IOException, CsvException {
-		String fileName = "D:\\ADS\\backer.csv";
+		String fileName = "D:\\ADS\\abc2.csv";
 
-		modifyFile(fileName);
+		File csvToShow = modifyFile(fileName);
 
-		List<Sala> beans = new CsvToBeanBuilder<Sala>(new FileReader(fileName))
+		List<Sala> beans = new CsvToBeanBuilder<Sala>(new FileReader(csvToShow.getAbsolutePath()))
 				.withSkipLines(1)
 				.withSeparator(';')
 				.withType(Sala.class)
@@ -31,16 +33,19 @@ public class CsvImporter {
 		
 	}
 
-	public static void modifyFile(String filePath) throws IOException, CsvException {
+	public static File modifyFile(String filePath) throws IOException, CsvException {
 		
 
+		File tempCSV = File.createTempFile("tempCSV", ".csv");
+		System.out.println(tempCSV.getAbsolutePath());
+		tempCSV.deleteOnExit();
 		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
 		try (CSVReader reader = new CSVReaderBuilder(new FileReader(filePath)).withCSVParser(csvParser) 
 				.build()) {
 			
 			List<String[]> r = reader.readAll();
 			//CSVWriter writer = new CSVWriter(new FileWriter(filePath));
-			CSVWriter writer = new CSVWriter(new FileWriter(filePath), ';',
+			CSVWriter writer = new CSVWriter(new FileWriter(tempCSV.getAbsolutePath()), ';',
                     CSVWriter.NO_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                     CSVWriter.DEFAULT_LINE_END);
@@ -63,6 +68,7 @@ public class CsvImporter {
 			//r.forEach(x -> System.out.println(Arrays.toString(x)));
 			writer.close();
 		}
+		return tempCSV;
 
 		
 		

@@ -9,10 +9,10 @@ public class Sala {
 	private String nome;
 	
 	@CsvBindByPosition(position = 2)
-	private String capacidadeNormal;
+	private int capacidadeNormal;
 	
 	@CsvBindByPosition(position = 3)
-	private String capacidadeExame;
+	private int capacidadeExame;
 	
 	@CsvBindByPosition(position = 4) 
 	int nCaracteristicas;
