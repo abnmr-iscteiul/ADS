@@ -2,78 +2,49 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
 
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CsvImporter {
-
+	
 	public static void main(String[] args) throws IOException, CsvException {
-		String fileName = "D:\\ADS\\abc2.csv";
+		String fileName = "C:\\Users\\Chainz\\Desktop\\ads.csv";
 
-		File csvToShow = modifyFile(fileName);
+		List<Sala> salas = criarListaSalas(fileName);
 
-		List<Sala> beans = new CsvToBeanBuilder<Sala>(new FileReader(csvToShow.getAbsolutePath()))
-				.withSkipLines(1)
-				.withSeparator(';')
-				.withType(Sala.class)
-				.build()
-				.parse();
-
-		System.out.println(beans.size());
-		for (int i = 0; i < beans.size(); i++) {
-			System.out.println(beans.get(i).toString());
+		for (int i = 0; i < salas.size(); i++) {
+			System.out.println(salas.get(i).toString());
 		}
 		
 	}
 
-	public static File modifyFile(String filePath) throws IOException, CsvException {
+	public static List<Sala> criarListaSalas(String filePath) throws IOException, CsvException {
 		
-
-		File tempCSV = File.createTempFile("tempCSV", ".csv");
-		System.out.println(tempCSV.getAbsolutePath());
-		tempCSV.deleteOnExit();
-		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
-		try (CSVReader reader = new CSVReaderBuilder(new FileReader(filePath)).withCSVParser(csvParser) 
-				.build()) {
+		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
+		CSVReader reader = new CSVReaderBuilder(new FileReader(filePath)).withCSVParser(csvParser).build();
 			
-			List<String[]> r = reader.readAll();
-			//CSVWriter writer = new CSVWriter(new FileWriter(filePath));
-			CSVWriter writer = new CSVWriter(new FileWriter(tempCSV.getAbsolutePath()), ';',
-                    CSVWriter.NO_QUOTE_CHARACTER,
-                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                    CSVWriter.DEFAULT_LINE_END);
+		List<String[]> csv = reader.readAll();
+		List<Sala> listaSalas = new ArrayList<Sala>();
 
-			// r.forEach(x -> System.out.println(Arrays.toString(x)));
-			for (int i = 0; i < r.size(); i++) {
-				for (int j = 0; j < r.get(i).length; j++) {
-					if (r.get(i)[j].equals("")) {
-						r.get(i)[j] = "false";
-
-					} else if (r.get(i)[j].equals("X")) {
-						r.get(i)[j] = "true";
-					}
+		for (int linha = 1; linha < csv.size(); linha++) {
+			List<CaracteristicaSala> listaCaracteristicas = new ArrayList<CaracteristicaSala>();
+			
+			for (int coluna = 5; coluna < csv.get(linha).length; coluna++) {
+				
+				if (csv.get(linha)[coluna].equals("X")) {
+					CaracteristicaSala caractSala = new CaracteristicaSala(csv.get(0)[coluna], "ola");
+					listaCaracteristicas.add(caractSala);
 				}
-				//System.out.println(Arrays.toString(r.get(i)));
-				writer.writeNext(r.get(i));
-
-
 			}
-			//r.forEach(x -> System.out.println(Arrays.toString(x)));
-			writer.close();
+			
+			Sala sala = new Sala(csv.get(linha)[0], csv.get(linha)[1], Integer.parseInt(csv.get(linha)[2]), Integer.parseInt(csv.get(linha)[3]), Integer.parseInt(csv.get(linha)[4]), listaCaracteristicas);
+			listaSalas.add(sala);
 		}
-		return tempCSV;
-
-		
-		
+		return listaSalas;
 	}
-
-
-
+	
 }
