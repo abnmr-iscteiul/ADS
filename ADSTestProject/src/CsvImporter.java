@@ -12,7 +12,8 @@ import java.util.List;
 public class CsvImporter {
 	
 	public static void main(String[] args) throws IOException, CsvException {
-		String fileName = "C:\\Users\\Chainz\\Desktop\\ads.csv";
+		//String fileName = "C:\\Users\\Chainz\\Desktop\\ads.csv";
+		String fileName = "/Users/chainz/Desktop/ADS/ads.csv";
 
 		List<Sala> salas = criarListaSalas(fileName);
 
@@ -36,7 +37,7 @@ public class CsvImporter {
 			for (int coluna = 5; coluna < csv.get(linha).length; coluna++) {
 				
 				if (csv.get(linha)[coluna].equals("X")) {
-					CaracteristicaSala caractSala = new CaracteristicaSala(csv.get(0)[coluna], "ola");
+					CaracteristicaSala caractSala = new CaracteristicaSala(csv.get(0)[coluna]);
 					listaCaracteristicas.add(caractSala);
 				}
 			}
