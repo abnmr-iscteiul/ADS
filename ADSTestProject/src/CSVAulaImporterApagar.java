@@ -10,36 +10,59 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class CSVSalaImporter {
+public class CSVAulaImporterApagar {
 
 	public static void main(String[] args) throws IOException, CsvException {
 		String fileName = "D:\\ADS\\ADS - Salas.csv";
 
 		//File csvToShow = modifyFile(fileName);
 
-		List<Horario> beans = new CsvToBeanBuilder<Horario>(new FileReader(fileName))
+		List<Aula> beans = new CsvToBeanBuilder<Aula>(new FileReader(fileName))
 				.withSkipLines(1)
 				.withSeparator(';')
-				.withType(Horario.class)
+				.withType(Aula.class)
 				.build()
 				.parse();
 
 		
 		
 		for (int i = 0; i < beans.size(); i++) {
-			if (beans.get(i).getCaracteristicaspedidas().equals("Sala Aulas Mestrado"))
-				System.out.println(beans.get(i));
+			
+				//System.out.println(beans.get(i));
 		}
+		
+		separateByWeekday(beans);
 		System.out.println(beans.size());
+		
+		System.out.println(beans.get(15).printToCSV());
 
 		
 	}
+	
+	public static void separateByWeekday(List<Aula> beans) {
+		String[] weekdays = {"Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"};
+		
+		List<Aula> segundaArrya = new ArrayList<>();
+		
+		for (int i = 0; i < beans.size(); i++) {
+			if (beans.get(i).getDiaSemana().equals("Seg"))
+				segundaArrya.add(beans.get(i));
+				
+		}
+		
+		for (int i = 0; i < segundaArrya.size(); i++) {
+			//System.out.println(segundaArrya.get(i));
+			
+		}
+		System.out.println(segundaArrya.size());
+	}
+	
 
 	public static File modifyFile(String filePath) throws IOException, CsvException {
 		
-
 		File tempCSV = File.createTempFile("tempCSV", ".csv");
 		System.out.println(tempCSV.getAbsolutePath());
 		tempCSV.deleteOnExit();

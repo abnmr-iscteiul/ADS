@@ -2,67 +2,78 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 public class CsvImporter {
 	private static List<String[]> csvReader;
+	private static ArrayList<String> uniqueDates = new ArrayList<String>();
 
 	public static void main(String[] args) throws IOException, CsvException {
-		String fileName = "D:\\ADS\\abc2.csv";
+		String fileName = "D:\\ADS\\abc10.csv";
+		String fileNameAulas = "D:\\ADS\\ADS - Salas.csv";
 
-
-		List<Sala> beans = new CsvToBeanBuilder<Sala>(new FileReader(fileName)).withSkipLines(1).withSeparator(';')
+		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileName)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
-		adicionarCaracteristicas(beans, fileName);
+		List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1).withSeparator(';')
+				.withType(Aula.class).build().parse();
 
-		for (int i = 0; i < beans.size(); i++) {
-			System.out.println(beans.get(i).toString());
-		}
+		adicionarCaracteristicas(salas, fileName);
+
+		uniqueDates = getAllDates(aulas);
+
+		separateByWeekday(aulas, salas, uniqueDates);
+
+//		 for (int i = 0; i < salas.size(); i++) {
+//		 System.out.println(salas.get(i).toString()); }
 
 	}
 
-/*
-	public static File modifyFile(String filePath) throws IOException, CsvException {
+	/*
+	 * public static File modifyFile(String filePath) throws IOException,
+	 * CsvException {
+	 * 
+	 * File tempCSV = File.createTempFile("tempCSV", ".csv");
+	 * System.out.println(tempCSV.getAbsolutePath()); tempCSV.deleteOnExit();
+	 * 
+	 * CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); //
+	 * custom separator try (CSVReader reader = new CSVReaderBuilder(new
+	 * FileReader(filePath)).withCSVParser(csvParser).build()) {
+	 * 
+	 * csvReader = reader.readAll(); CSVWriter writer = new CSVWriter(new
+	 * FileWriter(tempCSV.getAbsolutePath()), ';', CSVWriter.NO_QUOTE_CHARACTER,
+	 * CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+	 * 
+	 * for (int i = 0; i < csvReader.size(); i++) { for (int j = 0; j <
+	 * csvReader.get(i).length; j++) { if (csvReader.get(i)[j].equals("")) {
+	 * csvReader.get(i)[j] = "false";
+	 * 
+	 * } else if (csvReader.get(i)[j].equals("X")) { csvReader.get(i)[j] = "true"; }
+	 * } writer.writeNext(csvReader.get(i));
+	 * 
+	 * } writer.close(); } return tempCSV; }
+	 */
 
-		File tempCSV = File.createTempFile("tempCSV", ".csv");
-		System.out.println(tempCSV.getAbsolutePath());
-		tempCSV.deleteOnExit();
-
-		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
-		try (CSVReader reader = new CSVReaderBuilder(new FileReader(filePath)).withCSVParser(csvParser).build()) {
-
-			csvReader = reader.readAll();
-			CSVWriter writer = new CSVWriter(new FileWriter(tempCSV.getAbsolutePath()), ';',
-					CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-
-			for (int i = 0; i < csvReader.size(); i++) {
-				for (int j = 0; j < csvReader.get(i).length; j++) {
-					if (csvReader.get(i)[j].equals("")) {
-						csvReader.get(i)[j] = "false";
-
-					} else if (csvReader.get(i)[j].equals("X")) {
-						csvReader.get(i)[j] = "true";
-					}
-				}
-				writer.writeNext(csvReader.get(i));
-
-			}
-			writer.close();
+	private static ArrayList<String> getAllDates(List<Aula> aulas) {
+		Set<String> uniqueDates = new HashSet<String>();
+		for (Aula a : aulas) {
+			uniqueDates.add(a.getDia());
 		}
-		return tempCSV;
+		uniqueDates.remove("");
+		ArrayList<String> uniqueDatesArray = new ArrayList<>(uniqueDates);
+
+		return uniqueDatesArray;
+
 	}
-*/
-	
+
 	private static void adicionarCaracteristicas(List<Sala> beans, String fileName)
 			throws FileNotFoundException, IOException, CsvException {
 
@@ -72,6 +83,7 @@ public class CsvImporter {
 			csvReader = reader.readAll();
 
 			for (int i = 0; i < csvReader.size(); i++) {
+				startHorarioArray(i, beans);
 				for (int j = 0; j < csvReader.get(i).length; j++) {
 					if (csvReader.get(i)[j].equals("X")) {
 						beans.get(i - 1).setCaracteristicas(csvReader.get(0)[j]);
@@ -81,10 +93,81 @@ public class CsvImporter {
 
 			}
 		}
-		
 		System.out.println("CSV File Size   " + csvReader.size());
 
+	}
 
+	public static void separateByWeekday(List<Aula> aulas, List<Sala> salas, ArrayList<String> uniqueDates) {
+
+		List<Aula> dayArray = new ArrayList<>();
+
+		for (String s : uniqueDates) {
+			System.out.println(s);
+
+			for (int i = 0; i < aulas.size(); i++) {
+				if (aulas.get(i).getDia().equals(s))
+					dayArray.add(aulas.get(i));
+
+			}
+			System.out.println();
+			atribuirSalas(dayArray, salas, 10);
+
+		}
+		int counti = 0;
+		for (int i = 0; i < aulas.size(); i++) {
+			if (aulas.get(i).getSalaAtribuida() != null) {
+				counti++;
+				// System.out.println(aulas.get(i).getSalaAtribuida().toString());
+
+			}
+		}
+		System.out.println("Numero de aulas com salas atribuidas " + counti);
+		System.out.println("Numero de aulas total " + aulas.size());
+
+	}
+
+	private static void atribuirSalas(List<Aula> weekdayArray, List<Sala> salas, int alunosExtra) {
+		int count = 0;
+		for (Sala sala : salas) {
+
+			for (int i = 0; i < weekdayArray.size(); i++) {
+
+				int slotIndex = sala.getSlotIndex(weekdayArray.get(i).getInicio());
+				int finalSlotindex = sala.getSlotIndex(weekdayArray.get(i).getFim());
+
+				if (slotIndex > -1) {
+					if (!sala.isTimeSlotUsed(slotIndex, finalSlotindex)) {
+						if (sala.getCaracteristicas().contains(weekdayArray.get(i).getCaracteristicaspedida())
+								&& weekdayArray.get(i)
+										.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
+
+							count++;
+							weekdayArray.get(i).setSalaAtribuida(sala.getNome());
+							weekdayArray.get(i).setLotacao(sala.getCapacidadeNormal());
+							weekdayArray.get(i).setCaracteristicasReaisDaSala(sala.getCaracteristicas());
+
+							sala.setSlotsUsed(slotIndex, finalSlotindex);
+							weekdayArray.remove(weekdayArray.get(i));
+							i--;
+
+						}
+					}
+				}
+			}
+
+		}
+		for (Sala s : salas) {
+			s.getSlotArray().clear();
+			s.fillHorario();
+
+		}
+		System.out.println("Numero de vezes que a atribuição de salas acontece  " + count);
+
+	}
+
+	private static void startHorarioArray(int index, List<Sala> csvImporterArray) {
+		if (index > 0)
+			csvImporterArray.get(index - 1).fillHorario();
 	}
 
 }
