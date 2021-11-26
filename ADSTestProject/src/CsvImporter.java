@@ -2,12 +2,18 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
@@ -32,9 +38,37 @@ public class CsvImporter {
 
 		separateByWeekday(aulas, salas, uniqueDates);
 
-//		 for (int i = 0; i < salas.size(); i++) {
-//		 System.out.println(salas.get(i).toString()); }
+		printFinalCSV(fileNameAulas, aulas);
 
+	}
+
+	private static void printFinalCSV(String original, List<Aula> aulas) throws IOException, CsvException {
+		// String STRING_ARRAY_SAMPLE = "D:ADS/string-array-sample.csv";
+		File csvOutputFile = new File("D:ADS/finalCSVFile.csv");
+
+		String[] csvHeader;
+
+		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
+		try (CSVReader reader = new CSVReaderBuilder(new FileReader(original)).withCSVParser(csvParser).build()) {
+
+			csvReader = reader.readAll();
+			csvHeader = csvReader.get(0);
+
+		}
+
+		try (Writer writer = new FileWriter(csvOutputFile);
+
+				CSVWriter csvWriter = new CSVWriter(writer, ';', CSVWriter.NO_QUOTE_CHARACTER,
+						CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+
+			csvWriter.writeNext(csvHeader);
+
+			for (Aula aulaPrenchida : aulas) {
+				csvWriter.writeNext(aulaPrenchida.printToCSV());
+
+			}
+
+		}
 	}
 
 	/*
@@ -99,9 +133,9 @@ public class CsvImporter {
 
 	public static void separateByWeekday(List<Aula> aulas, List<Sala> salas, ArrayList<String> uniqueDates) {
 
-		List<Aula> dayArray = new ArrayList<>();
-
 		for (String s : uniqueDates) {
+			List<Aula> dayArray = new ArrayList<>();
+
 			System.out.println(s);
 
 			for (int i = 0; i < aulas.size(); i++) {

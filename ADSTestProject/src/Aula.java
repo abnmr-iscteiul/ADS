@@ -115,6 +115,8 @@ public class Aula {
 		if (salaAtribuida == null)
 			salaAtribuida = "";
 		
+		System.out.println(carReaisSalas);
+		
 		String[] toCSV = { curso, unidadeCurricular, turno, turma, Integer.toString(numeroInscritos),
 				turnosComCapacidadeSuperior, turnosComInscricoesSuperiores,
 				diaDaSemana, inicio, fim, dia, caracteristicaspedida, salaAtribuida, Integer.toString(lotacao),
