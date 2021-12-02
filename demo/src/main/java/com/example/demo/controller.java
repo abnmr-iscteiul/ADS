@@ -1,5 +1,8 @@
 package com.example.demo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +37,22 @@ public class controller {
 		return "import";
 	}
 	
+	@GetMapping("/res")
+	public String mappingRes(Model model) {		
+		String csvOutputFile;
+		try {
+			csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"));
+			model.addAttribute("csv",csvOutputFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "res";
+	}
+	
 	@PostMapping("/post")
-	public String post(@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2,Model model) {
+	public String post(@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2) {
 		
 		Path filepath = Paths.get("src/main/resources", file.getOriginalFilename());
 
@@ -55,11 +73,11 @@ public class controller {
 		}
 	
 		try {
-			CsvImporter.resultado(filepath.toString(), filepath2.toString());
+			CsvImporter.resultado(filepath.toString(), filepath2.toString(),Paths.get("src/main/resources", "final").toString());
 		} catch (IllegalStateException | IOException | CsvException e) {
 		}
-
-		return "import";
+		
+		return "redirect:/res";
 	}
 	
 }

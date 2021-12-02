@@ -43,7 +43,7 @@ public class CsvImporter {
 	
 	
 	
-	public static void resultado(String fileNameAulas, String fileName) throws IllegalStateException, IOException, CsvException {
+	public static void resultado(String fileNameAulas, String fileName, String path) throws IllegalStateException, IOException, CsvException {
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileName)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
@@ -56,7 +56,7 @@ public class CsvImporter {
 
 		separateByWeekday(aulas, salas, uniqueDates);
 
-		printFinalCSV(fileNameAulas, aulas);
+		printFinalCSV2(fileNameAulas, aulas,path);
 	}
 	
 	
@@ -65,6 +65,34 @@ public class CsvImporter {
 	private static void printFinalCSV(String original, List<Aula> aulas) throws IOException, CsvException {
 		// String STRING_ARRAY_SAMPLE = "D:ADS/string-array-sample.csv";
 		File csvOutputFile = new File("D:ADS/finalCSVFile.csv");
+
+		String[] csvHeader;
+
+		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
+		try (CSVReader reader = new CSVReaderBuilder(new FileReader(original)).withCSVParser(csvParser).build()) {
+
+			csvReader = reader.readAll();
+			csvHeader = csvReader.get(0);
+
+		}
+
+		try (Writer writer = new FileWriter(csvOutputFile);
+
+				CSVWriter csvWriter = new CSVWriter(writer, ';', CSVWriter.NO_QUOTE_CHARACTER,
+						CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+
+			csvWriter.writeNext(csvHeader);
+
+			for (Aula aulaPrenchida : aulas) {
+				csvWriter.writeNext(aulaPrenchida.printToCSV());
+
+			}
+
+		}
+	}
+	private static void printFinalCSV2(String original, List<Aula> aulas, String path) throws IOException, CsvException {
+		// String STRING_ARRAY_SAMPLE = "D:ADS/string-array-sample.csv";
+		File csvOutputFile = new File(path);
 
 		String[] csvHeader;
 
