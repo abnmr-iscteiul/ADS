@@ -34,9 +34,29 @@ public class Sala {
 				+ ", capacidadeExame=" + capacidadeExame + ", nCaracteristicas=" + nCaracteristicas
 				+ ", caracteristicas=" + caracteristicas + "           " + slots.size() + "]";
 	}
-
+	
+	
 	public ArrayList<String> getCaracteristicas() {
 		return caracteristicas;
+	}
+	
+
+	public String getCaracteristicasInString() {
+		String caracteristicasStr = "";
+		if (!caracteristicas.isEmpty()) {
+			for (int i =0; i<caracteristicas.size(); i++){
+				if (i == caracteristicas.size()-1) {
+					caracteristicasStr += caracteristicas.get(i);
+				} else {
+					caracteristicasStr += caracteristicas.get(i) + ",";
+				}
+			}
+			
+		} else {
+			caracteristicasStr = "";
+		}
+		
+		return caracteristicasStr;
 	}
 
 	public void setCaracteristicas(String specificCaracteristicas) {

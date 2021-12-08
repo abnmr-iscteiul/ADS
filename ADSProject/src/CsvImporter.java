@@ -17,14 +17,21 @@ import java.util.List;
 import java.util.*;
 
 public class CsvImporter {
-	
+
 	private static List<String[]> csvReader;
 	private static ArrayList<String> uniqueDates = new ArrayList<String>();
-	
+
+	// ALGORITMOS - sexta e sabado com mais alunos que lugares da sala, nao ter em
+	// conta as caracteristicas, ter em conta as caracteristicas
+
+	// METRICAS DE AVALIAÇAO - numero de aulas sem sala, trocas de edificio,
+	// mudanças de sala, salas disponiveis, numero de salas atribuidas com a
+	// caracteristica pedida
 
 	public static void main(String[] args) throws IOException, CsvException {
-		String fileName = "D:\\ADS\\abc10.csv";
-		String fileNameAulas = "D:\\ADS\\ADS - Salas.csv";
+		String fileNameAulas = "C:\\Users\\Chainz\\Desktop\\ADS - Exemplo de horario do 1o Semestre.csv";
+		String fileName = "C:\\Users\\Chainz\\Desktop\\ads.csv";
+		String algoritmo = "";
 
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileName)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
@@ -36,8 +43,8 @@ public class CsvImporter {
 
 		uniqueDates = getAllDates(aulas);
 
-		separarPorDiaDaSemana(aulas, salas, uniqueDates);
-		
+		separarPorDia(aulas, salas, uniqueDates);
+
 		contarAulasComSalasAtribuidas(aulas);
 
 		printCSVFinal(fileNameAulas, aulas);
@@ -45,25 +52,17 @@ public class CsvImporter {
 	}
 
 	private static void printCSVFinal(String original, List<Aula> aulas) throws IOException, CsvException {
-		// String STRING_ARRAY_SAMPLE = "D:ADS/string-array-sample.csv";
-		File csvOutputFile = new File("D:ADS/finalCSVFile.csv");
+		File csvOutputFile = new File("C:\\Users\\Chainz\\Desktop\\finalCSVFile.csv");
 		String[] csvHeader;
 
 		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
 		try (CSVReader reader = new CSVReaderBuilder(new FileReader(original)).withCSVParser(csvParser).build()) {
-
-			//EXPRIMENTAR TROCAR PARA:
-			//csvHeader = reader.readNext();
-			csvReader = reader.readAll();
-			csvHeader = csvReader.get(0);
-
+			csvHeader = reader.readNext();
 		}
 
 		try (Writer writer = new FileWriter(csvOutputFile);
-				CSVWriter csvWriter = new CSVWriter(writer, ';', 
-						CSVWriter.NO_QUOTE_CHARACTER,
-						CSVWriter.DEFAULT_ESCAPE_CHARACTER, 
-						CSVWriter.DEFAULT_LINE_END);) {
+				CSVWriter csvWriter = new CSVWriter(writer, ';', CSVWriter.NO_QUOTE_CHARACTER,
+						CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 
 			csvWriter.writeNext(csvHeader);
 
@@ -101,19 +100,19 @@ public class CsvImporter {
 
 	private static ArrayList<String> getAllDates(List<Aula> aulas) {
 		Set<String> uniqueDates = new HashSet<String>();
-		
+
 		for (Aula a : aulas) {
 			uniqueDates.add(a.getDia());
 		}
-		
+
 		uniqueDates.remove("");
 		ArrayList<String> uniqueDatesArray = new ArrayList<>(uniqueDates);
 
 		return uniqueDatesArray;
 	}
-	
 
-	private static void adicionarCaracteristicas(List<Sala> salas, String fileName) throws FileNotFoundException, IOException, CsvException {
+	private static void adicionarCaracteristicas(List<Sala> salas, String fileName)
+			throws FileNotFoundException, IOException, CsvException {
 
 		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
 		try (CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withCSVParser(csvParser).build()) {
@@ -122,7 +121,7 @@ public class CsvImporter {
 
 			for (int i = 0; i < csvReader.size(); i++) {
 				startSlotsArray(i, salas);
-				
+
 				for (int j = 0; j < csvReader.get(i).length; j++) {
 					if (csvReader.get(i)[j].equals("X")) {
 						salas.get(i - 1).setCaracteristicas(csvReader.get(0)[j]);
@@ -132,29 +131,28 @@ public class CsvImporter {
 		}
 		System.out.println("CSV File Size   " + csvReader.size());
 	}
-	
 
-	public static void separarPorDiaDaSemana(List<Aula> aulas, List<Sala> salas, ArrayList<String> uniqueDates) {
+	public static void separarPorDia(List<Aula> aulas, List<Sala> salas, ArrayList<String> uniqueDates) {
 
 		for (String s : uniqueDates) {
-			List<Aula> dayArray = new ArrayList<>();
+			List<Aula> aulasDesseDia = new ArrayList<>();
 
 			System.out.println(s);
 
 			for (int i = 0; i < aulas.size(); i++) {
 				if (aulas.get(i).getDia().equals(s))
-					dayArray.add(aulas.get(i));
+					aulasDesseDia.add(aulas.get(i));
 
 			}
-			atribuirSalas(dayArray, salas, 10);
+			preencherAulasComSalaAtribuida(aulasDesseDia, salas);
+			atribuirSalas(aulasDesseDia, salas, 10);
 		}
 	}
-	
-	
+
 	private static void contarAulasComSalasAtribuidas(List<Aula> aulas) {
 		int counti = 0;
-		for (int i = 0; i < aulas.size(); i++) {
-			if (aulas.get(i).getSalaAtribuida() != null) {
+		for (Aula aula : aulas) {
+			if (!aula.getSalaAtribuida().isBlank()) {
 				counti++;
 			}
 		}
@@ -163,29 +161,26 @@ public class CsvImporter {
 	}
 	
 
-	private static void atribuirSalas(List<Aula> weekdayArray, List<Sala> salas, int alunosExtra) {
-		int count = 0;
+	private static void atribuirSalas(List<Aula> aulasDesseDia, List<Sala> salas, int alunosExtra) {
 		for (Sala sala : salas) {
-
-			for (int i = 0; i < weekdayArray.size(); i++) {
-
-				int slotIndex = sala.getSlotIndex(weekdayArray.get(i).getInicio());
-				int finalSlotindex = sala.getSlotIndex(weekdayArray.get(i).getFim());
+			for (Aula aula : aulasDesseDia) {
+				if (!aula.getSalaAtribuida().isBlank()) {
+					continue;
+				}
+				int slotIndex = sala.getSlotIndex(aula.getInicio());
+				int finalSlotindex = sala.getSlotIndex(aula.getFim());
 
 				if (slotIndex > -1) {
 					if (!sala.isTimeSlotUsed(slotIndex, finalSlotindex)) {
-						if (sala.getCaracteristicas().contains(weekdayArray.get(i).getCaracteristicaspedida())
-								&& weekdayArray.get(i).getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
 
-							count++;
-							weekdayArray.get(i).setSalaAtribuida(sala.getNome());
-							weekdayArray.get(i).setLotacao(sala.getCapacidadeNormal());
-							weekdayArray.get(i).setCaracteristicasReaisDaSala(sala.getCaracteristicas());
+						if (sala.getCaracteristicas().contains(aula.getCaracteristicaPedida())
+								&& aula.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
+
+							aula.setSalaAtribuida(sala.getNome());
+							aula.setLotacao(sala.getCapacidadeNormal());
+							aula.setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
 
 							sala.setSlotsUsed(slotIndex, finalSlotindex);
-							weekdayArray.remove(weekdayArray.get(i));
-							i--;
-							
 						}
 					}
 				}
@@ -194,9 +189,7 @@ public class CsvImporter {
 		for (Sala s : salas) {
 			s.getSlotArray().clear();
 			s.criarSlots();
-
 		}
-		System.out.println("Numero de vezes que a atribuição de salas acontece  " + count);
 	}
 	
 
@@ -205,5 +198,31 @@ public class CsvImporter {
 			csvImporterArray.get(index - 1).criarSlots();
 		}
 	}
+
+	private static void preencherAulasComSalaAtribuida(List<Aula> aulas, List<Sala> salas) {
+		for (Aula aula : aulas) {
+			if (!aula.getSalaAtribuida().isBlank()) {
+				for (Sala sala : salas) {
+					if (sala.getNome() == aula.getSalaAtribuida()) {
+						int slotIndex = sala.getSlotIndex(aula.getInicio());
+						int finalSlotindex = sala.getSlotIndex(aula.getFim());
+						sala.setSlotsUsed(slotIndex, finalSlotindex);
+					}
+				}
+			}
+		}
+	}
+
+//	private static void algoritmoSextaSabado(List<Aula> aulasDesseDia, int indexAula) {
+//		if (aulasDesseDia.get(indexAula).getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
+//			aulasDesseDia.get(indexAula).setSalaAtribuida(sala.getNome());
+//			aulasDesseDia.get(indexAula).setLotacao(sala.getCapacidadeNormal());
+//			aulasDesseDia.get(indexAula).setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
+//
+//			sala.setSlotsUsed(slotIndex, finalSlotindex);
+//			aulasDesseDia.remove(aulasDesseDia.get(indexAula));
+//			indexAula--;
+//		}
+//	}
 
 }
