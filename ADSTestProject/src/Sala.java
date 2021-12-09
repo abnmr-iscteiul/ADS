@@ -19,7 +19,6 @@ public class Sala {
 	@CsvBindByPosition(position = 4)
 	int nCaracteristicas;
 
-	// @CsvBindByPosition(position = 5)
 	ArrayList<String> caracteristicas = new ArrayList<String>();
 
 	ArrayList<Slot> slots = new ArrayList<>();
@@ -35,9 +34,29 @@ public class Sala {
 				+ ", capacidadeExame=" + capacidadeExame + ", nCaracteristicas=" + nCaracteristicas
 				+ ", caracteristicas=" + caracteristicas + "           " + slots.size() + "]";
 	}
-
+	
+	
 	public ArrayList<String> getCaracteristicas() {
 		return caracteristicas;
+	}
+	
+
+	public String getCaracteristicasInString() {
+		String caracteristicasStr = "";
+		if (!caracteristicas.isEmpty()) {
+			for (int i =0; i<caracteristicas.size(); i++){
+				if (i == caracteristicas.size()-1) {
+					caracteristicasStr += caracteristicas.get(i);
+				} else {
+					caracteristicasStr += caracteristicas.get(i) + ",";
+				}
+			}
+			
+		} else {
+			caracteristicasStr = "";
+		}
+		
+		return caracteristicasStr;
 	}
 
 	public void setCaracteristicas(String specificCaracteristicas) {
@@ -56,10 +75,9 @@ public class Sala {
 		return nome;
 	}
 
-	public void fillHorario() {
+	public void criarSlots() {
 		for (String s : timeSlots) {
 			this.slots.add(new Slot(s, false));
-
 		}
 	}
 
