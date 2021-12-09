@@ -209,7 +209,8 @@ public class CsvImporter {
 
 	private static void algoritmoSextaSabado(Aula aulasDesseDia, Sala sala, int slotInicial, int slotFinal) {
 		String diaSemana = aulasDesseDia.getDiaSemana();
-		double alunosExtra = sala.getCapacidadeNormal() + sala.getCapacidadeNormal() * 0.05;
+		double alunosExtra = sala.getCapacidadeNormal() * 0.05;
+		
 		if (diaSemana.equals("Sex") || diaSemana.equals("Sáb")){
 			alunosExtra = sala.getCapacidadeNormal() + sala.getCapacidadeNormal() * 0.2;
 		} 	
