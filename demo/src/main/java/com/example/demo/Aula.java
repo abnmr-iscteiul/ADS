@@ -1,6 +1,4 @@
 package com.example.demo;
-import java.util.ArrayList;
-
 import com.opencsv.bean.CsvBindByPosition;
 
 public class Aula {
@@ -39,16 +37,19 @@ public class Aula {
 	private String dia;
 
 	@CsvBindByPosition(position = 11)
-	private String caracteristicaspedida;
+	private String caracteristicaPedida;
 
+	@CsvBindByPosition(position = 12)
 	private String salaAtribuida;
 
+	@CsvBindByPosition(position = 13)
 	private int lotacao;
 
-	private ArrayList<String> caracteristicasReaisDaSala;
+	@CsvBindByPosition(position = 14)
+	private String caracteristicasReaisDaSala;
 
-	public String getCaracteristicaspedida() {
-		return caracteristicaspedida;
+	public String getCaracteristicaPedida() {
+		return caracteristicaPedida;
 	}
 
 	public String getDiaSemana() {
@@ -79,11 +80,11 @@ public class Aula {
 		this.lotacao = lotacao;
 	}
 
-	public ArrayList<String> getCaracteristicasReaisDaSala() {
+	public String getCaracteristicasReaisDaSala() {
 		return caracteristicasReaisDaSala;
 	}
 
-	public void setCaracteristicasReaisDaSala(ArrayList<String> caracteristicasReaisDaSala) {
+	public void setCaracteristicasReaisDaSala(String caracteristicasReaisDaSala) {
 		this.caracteristicasReaisDaSala = caracteristicasReaisDaSala;
 	}
 
@@ -100,28 +101,14 @@ public class Aula {
 	}
 
 	public String[] printToCSV() {
-		String carReaisSalas = "";
-		if (caracteristicasReaisDaSala != null) {
-			for (int i =0; i<caracteristicasReaisDaSala.size(); i++){
-				if (i == caracteristicasReaisDaSala.size()-1)
-					carReaisSalas += caracteristicasReaisDaSala.get(i);
-				else
-					carReaisSalas += caracteristicasReaisDaSala.get(i) + ",";
-				
-			}
-		}else {
-			carReaisSalas = "";
-		}
-		
+
 		if (salaAtribuida == null)
 			salaAtribuida = "";
-		
-		System.out.println(carReaisSalas);
-		
+
 		String[] toCSV = { curso, unidadeCurricular, turno, turma, Integer.toString(numeroInscritos),
 				turnosComCapacidadeSuperior, turnosComInscricoesSuperiores,
-				diaDaSemana, inicio, fim, dia, caracteristicaspedida, salaAtribuida, Integer.toString(lotacao),
-				carReaisSalas };
+				diaDaSemana, inicio, fim, dia, caracteristicaPedida, salaAtribuida, Integer.toString(lotacao),
+				caracteristicasReaisDaSala };
 
 		return toCSV;
 	}
@@ -132,7 +119,7 @@ public class Aula {
 				+ turma + ", numeroInscritos=" + numeroInscritos + ", turnosComCapacidadeSuperior="
 				+ turnosComCapacidadeSuperior + ", turnosComInscricoesSuperiores=" + turnosComInscricoesSuperiores
 				+ ", diaDaSemana=" + diaDaSemana + ", inicio=" + inicio + ", fim=" + fim + ", dia=" + dia
-				+ ", caracteristicaspedida=" + caracteristicaspedida + ", salaAtribuida=" + salaAtribuida + ", lotacao="
+				+ ", caracteristicaspedida=" + caracteristicaPedida + ", salaAtribuida=" + salaAtribuida + ", lotacao="
 				+ lotacao + ", caracteristicasReaisDaSala=" + caracteristicasReaisDaSala + "]";
 	}
 }
