@@ -36,6 +36,7 @@ public class CsvImporter {
 		String fileNameAulas = "D:\\ADS\\ADS - Salas.csv";
 		String fileNameSala = "D:\\ADS\\abc10.csv";
 		String algoritmo = "";
+		String resultado = "";
 
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
@@ -51,30 +52,35 @@ public class CsvImporter {
 
 		contarAulasComSalasAtribuidas(aulas);
 
-		printCSVFinal(fileNameAulas, aulas);
+		printCSVFinal(fileNameAulas, aulas, resultado);
 
 	}
 	
-	public static void resultado(String fileNameAulas, String fileName, String path) throws IllegalStateException, IOException, CsvException {
-		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileName)).withSkipLines(1).withSeparator(';')
+	public static void resultado(String fileNameAulas,String fileNameSala,  String path) throws IllegalStateException, IOException, CsvException {
+		
+		String algoritmo = "sextaESabado";
+		
+		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
 		List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1).withSeparator(';')
 				.withType(Aula.class).build().parse();
-
-		adicionarCaracteristicas(salas, fileName);
+		
+		adicionarCaracteristicas(salas, fileNameSala);
 
 		uniqueDates = getAllDates(aulas);
 
-		//separarPorDia(aulas, salas, uniqueDates);
+		separarPorDia(aulas, salas, uniqueDates, algoritmo);
 
-		//printFinalCSV2(fileNameAulas, aulas,path);
+		contarAulasComSalasAtribuidas(aulas);
+
+		printCSVFinal(fileNameAulas, aulas,path);
+
 	}
 	
 
-	private static void printCSVFinal(String original, List<Aula> aulas) throws IOException, CsvException {
-		//File csvOutputFile = new File("C:\\Users\\Chainz\\Desktop\\finalCSVFile.csv");
-		File csvOutputFile = new File("D:\\ADS\\finalCSV.csv");
+	private static void printCSVFinal(String original, List<Aula> aulas, String path) throws IOException, CsvException {
+		File csvOutputFile = new File(path);
 		String[] csvHeader;
 
 		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build(); // custom separator
