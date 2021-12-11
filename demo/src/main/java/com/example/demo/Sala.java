@@ -124,4 +124,8 @@ public class Sala {
 
 	}
 
+	public String getEdificio() {
+		return edificio;
+	}
+
 }

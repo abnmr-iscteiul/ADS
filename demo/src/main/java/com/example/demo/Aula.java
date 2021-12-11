@@ -59,6 +59,12 @@ public class Aula {
 	public String getInicio() {
 		return inicio;
 	}
+	
+	public Double getInicioDouble() {
+		String[] horaArray = inicio.split(":");
+		double horaInicio = Double.parseDouble(horaArray[0]) + (Double.parseDouble(horaArray[1]) * 0.01);
+		return horaInicio;
+	}
 
 	public int getNumeroInscritos() {
 		return numeroInscritos;
@@ -98,6 +104,10 @@ public class Aula {
 
 	public String getDia() {
 		return dia;
+	}
+	
+	public String getTurma() {
+		return turma;
 	}
 
 	public String[] printToCSV() {

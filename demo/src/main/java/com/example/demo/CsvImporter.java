@@ -24,11 +24,14 @@ public class CsvImporter {
 
 	// ALGORITMOS - sexta e sabado com mais alunos que lugares da sala, nao ter em
 	// conta as caracteristicas, ter em conta as caracteristicas
+	
+	// LIFO, FIFO, Random (DONE)
+	// algoritmo que tenta atribuir primeiro as salas com menor capacidade
 
-	// METRICAS DE AVALIAÇAO - numero de aulas sem sala, trocas de edificio,
+	// METRICAS DE AVALIAÇAO - numero de aulas com sala atribuida, trocas de edificio,
 	// mudanças de sala, salas disponiveis, numero de salas atribuidas com a
 	// caracteristica pedida
-	//20187
+	
 	public static void main(String[] args) throws IOException, CsvException {
 		String fileNameAulas = "C:\\Users\\Chainz\\Desktop\\ADS - Exemplo de horario do 1o Semestre.csv";
 		String fileNameSala = "C:\\Users\\Chainz\\Desktop\\ads.csv";
@@ -52,9 +55,12 @@ public class CsvImporter {
 		salas = escolherAlgoritmo(salas, algoritmo);
 		System.out.println(salas);
 		separarPorDia(aulas, salas, uniqueDates, metodoAUsar);
+		
+		ordenarPorHora(aulas);
+		System.out.println(aulas);
 
 		contarAulasComSalasAtribuidas(aulas);
-
+		
 		printCSVFinal(fileNameAulas, aulas, resultado);
 
 	}
@@ -129,7 +135,7 @@ public class CsvImporter {
 	 * } writer.close(); } return tempCSV; }
 	 */
 
-	private static ArrayList<String> getAllDates(List<Aula> aulas) {
+	public static ArrayList<String> getAllDates(List<Aula> aulas) {
 		Set<String> uniqueDates = new HashSet<String>();
 
 		for (Aula a : aulas) {
@@ -140,6 +146,62 @@ public class CsvImporter {
 		ArrayList<String> uniqueDatesArray = new ArrayList<>(uniqueDates);
 
 		return uniqueDatesArray;
+	}
+	
+	
+	public static ArrayList<String> getAllTurmas(List<Aula> aulas) {
+		Set<String> uniqueTurmas = new HashSet<String>();
+		String[] turmasByComma;
+
+		for (Aula a : aulas) {
+			if (a.getSalaAtribuida().isBlank()) {
+				if (a.getTurma().contains(",")) {
+					turmasByComma = a.getTurma().split(", ");
+
+					for (String turmas : turmasByComma)
+						uniqueTurmas.add(turmas);
+
+				} else
+					uniqueTurmas.add(a.getTurma());
+			}
+		}
+
+		uniqueTurmas.remove("");
+		ArrayList<String> uniqueTurmasArray = new ArrayList<>(uniqueTurmas);
+
+		return uniqueTurmasArray;
+	}
+	
+	
+	public static String getEdificio(List<Sala> salas, String nomeSala) {
+		String edificio = "";
+		for(Sala sala : salas) {
+			if (sala.getNome().equals(nomeSala)) {
+				edificio = sala.getEdificio();
+				break;
+			}
+		}
+		return edificio;
+	}
+
+
+	public static List<Aula> ordenarPorHora(List<Aula> aulas) {
+		List<Aula> aulasAux = aulas;
+		List<Aula> aulasOrdenadas = new ArrayList<Aula>();
+		
+		while(!aulasAux.isEmpty()) {
+			
+			Aula aux = aulasAux.get(0);
+			for(Aula aula : aulasAux) {
+				if (aula.getInicioDouble() < aux.getInicioDouble()) {
+					aux = aula;
+				}
+			}
+			aulasAux.remove(aux);
+			aulasOrdenadas.add(aux);
+		}
+		
+		return aulasOrdenadas;
 	}
 	
 
@@ -280,7 +342,7 @@ public class CsvImporter {
 	}
 	
 	
-	//apenas tem em conta a capacidade da sala (sem overfit)
+	//apenas tem em conta a capacidade da sala 
 	private static void algoritmoApenasCapacidade(Aula aulaDesseDia, Sala sala, int slotInicial, int slotFinal) {
 		double alunosExtra = sala.getCapacidadeNormal() * 0.05;
 		if(aulaDesseDia.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
@@ -319,5 +381,6 @@ public class CsvImporter {
 		Collections.shuffle(salas);
 		return salas;
 	}
+	
 
 }
