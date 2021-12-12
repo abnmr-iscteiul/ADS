@@ -36,7 +36,6 @@
 			});
 
 			calendar.render();
-			$("#calendar").toggle();
 			dropdownCreator()
 		});
 		
@@ -147,13 +146,13 @@
 		</form>
 		<div class="row">
 			<div class="col-1 p-0">
-				<button class="btn btn-secondary btn-tab w-100">Salas</button>
+				<button class="btn btn-secondary btn-tab w-100">Resultado</button>
 			</div>
 			<div class="col-1 p-0">
-				<button class="btn btn-secondary btn-tab w-100">Horários</button>
+				<button class="btn btn-secondary btn-tab w-100" onclick="handleCalendar()">Horários</button>
 			</div>
 			<div class="col-1 p-0">
-				<button class="btn btn-secondary btn-tab w-100" onclick="handleCalendar()">Resultado</button>
+				<button class="btn btn-secondary btn-tab w-100">Métricas</button>
 			</div>
 		</div>
 		<div class="row h-100">
