@@ -13,7 +13,7 @@ public class Avaliacao {
 	private int numTrocasSala;
 	private int numSalasAtribComCaracPedida;
 	
-	private int NUM_METRICAS;
+	private int NUM_METRICAS = 4;
 
 	 
 	Avaliacao(List<Aula> aulas, List<Sala> salas) {
@@ -58,8 +58,10 @@ public class Avaliacao {
 					if (aulaDesseDia.getTurma().equals(turma))
 						aulasDaTurma.add(aulaDesseDia);
 				}
-				CsvImporter.ordenarPorHora(aulasDaTurma);
-				numTrocas += compararEdificios(aulasDaTurma);
+				if (!aulasDaTurma.isEmpty()) {
+					aulasDaTurma = CsvImporter.ordenarPorHora(aulasDaTurma);
+					numTrocas += compararEdificios(aulasDaTurma);
+				}
 			}
 		}
 		
@@ -88,8 +90,10 @@ public class Avaliacao {
 					if (aulaDesseDia.getTurma().equals(turma))
 						aulasDaTurma.add(aulaDesseDia);
 				}
-				CsvImporter.ordenarPorHora(aulasDaTurma);
-				numTrocas += compararSalas(aulasDaTurma);
+				if (!aulasDaTurma.isEmpty()) {
+					aulasDaTurma = CsvImporter.ordenarPorHora(aulasDaTurma);
+					numTrocas += compararSalas(aulasDaTurma);
+				}
 			}
 		}
 		return numTrocas;

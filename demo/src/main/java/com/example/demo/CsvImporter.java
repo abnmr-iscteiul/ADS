@@ -33,8 +33,8 @@ public class CsvImporter {
 	// caracteristica pedida
 	
 	public static void main(String[] args) throws IOException, CsvException {
-		String fileNameAulas = "C:\\Users\\Chainz\\Desktop\\ADS - Exemplo de horario do 1o Semestre.csv";
-		String fileNameSala = "C:\\Users\\Chainz\\Desktop\\ads.csv";
+		String fileNameAulas = "/Users/chainz/Desktop/ADS/adsAulas.csv";
+		String fileNameSala = "/Users/chainz/Desktop/ADS/adsSalas.csv";
 		
 		//String fileNameAulas = "D:\\ADS\\ADS - Salas.csv";
 		//String fileNameSala = "D:\\ADS\\abc10.csv";
@@ -51,14 +51,15 @@ public class CsvImporter {
 		adicionarCaracteristicas(salas, fileNameSala);
 
 		uniqueDates = getAllDates(aulas);
-		System.out.println(salas);
-		salas = escolherAlgoritmo(salas, algoritmo);
-		System.out.println(salas);
-		separarPorDia(aulas, salas, uniqueDates, metodoAUsar);
+		salas = escolherAlgoritmoOrdenacao(salas, algoritmo);
+		separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates, metodoAUsar);
 		
-		ordenarPorHora(aulas);
-		System.out.println(aulas);
-
+		Avaliacao avaliacao = new Avaliacao(aulas, salas);
+		int[] resultadosAvaliacao = avaliacao.getAvaliacao();
+		for(int i = 0; i != resultadosAvaliacao.length; i++) {
+			System.out.println(resultadosAvaliacao[i]);
+		}
+		
 		contarAulasComSalasAtribuidas(aulas);
 		
 		printCSVFinal(fileNameAulas, aulas, resultado);
@@ -79,7 +80,7 @@ public class CsvImporter {
 
 		uniqueDates = getAllDates(aulas);
 
-		separarPorDia(aulas, salas, uniqueDates, algoritmo);
+		separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates, algoritmo);
 
 		contarAulasComSalasAtribuidas(aulas);
 
@@ -197,8 +198,8 @@ public class CsvImporter {
 					aux = aula;
 				}
 			}
-			aulasAux.remove(aux);
 			aulasOrdenadas.add(aux);
+			aulasAux.remove(aux);
 		}
 		
 		return aulasOrdenadas;
@@ -227,7 +228,7 @@ public class CsvImporter {
 	}
 
 	
-	public static void separarPorDia(List<Aula> aulas, List<Sala> salas, ArrayList<String> uniqueDates, String algoritmo) {
+	public static void separarPorDiaEAtribuirSalas(List<Aula> aulas, List<Sala> salas, ArrayList<String> uniqueDates, String algoritmo) {
 
 		for (String s : uniqueDates) {
 			List<Aula> aulasDesseDia = new ArrayList<>();
@@ -269,13 +270,13 @@ public class CsvImporter {
 
 						switch(metodoAUsar) {
 						case "sextaESabado":
-							algoritmoSextaSabado(aula, sala, slotIndex, finalSlotindex);
+							metodoSextaSabado(aula, sala, slotIndex, finalSlotindex);
 							break;
 						case "apenasCapacidade":
-							algoritmoApenasCapacidade(aula, sala, slotIndex, finalSlotindex);
+							metodoApenasCapacidade(aula, sala, slotIndex, finalSlotindex);
 							break;
 						case "comCaractECapac":
-							algoritmoComCaractECapac(aula, sala, slotIndex, finalSlotindex);
+							metodoComCaractECapac(aula, sala, slotIndex, finalSlotindex);
 							break;
 						}
 						
@@ -312,7 +313,7 @@ public class CsvImporter {
 	}
 	
 
-	private static void algoritmoSextaSabado(Aula aulaDesseDia, Sala sala, int slotInicial, int slotFinal) {
+	private static void metodoSextaSabado(Aula aulaDesseDia, Sala sala, int slotInicial, int slotFinal) {
 		String diaSemana = aulaDesseDia.getDiaSemana();
 		double alunosExtra = sala.getCapacidadeNormal() * 0.05;
 		
@@ -330,7 +331,7 @@ public class CsvImporter {
 	}
 	
 	
-	private static void algoritmoComCaractECapac(Aula aulaDesseDia, Sala sala, int slotInicial, int slotFinal) {
+	private static void metodoComCaractECapac(Aula aulaDesseDia, Sala sala, int slotInicial, int slotFinal) {
 		double alunosExtra = sala.getCapacidadeNormal() * 0.05;
 		if (sala.getCaracteristicas().contains(aulaDesseDia.getCaracteristicaPedida()) && aulaDesseDia.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
 			aulaDesseDia.setSalaAtribuida(sala.getNome());
@@ -343,7 +344,7 @@ public class CsvImporter {
 	
 	
 	//apenas tem em conta a capacidade da sala 
-	private static void algoritmoApenasCapacidade(Aula aulaDesseDia, Sala sala, int slotInicial, int slotFinal) {
+	private static void metodoApenasCapacidade(Aula aulaDesseDia, Sala sala, int slotInicial, int slotFinal) {
 		double alunosExtra = sala.getCapacidadeNormal() * 0.05;
 		if(aulaDesseDia.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
 			aulaDesseDia.setSalaAtribuida(sala.getNome());
@@ -355,7 +356,7 @@ public class CsvImporter {
 	}
 	
 	
-	private static List<Sala> escolherAlgoritmo(List<Sala> salas, String algoritmo) {
+	private static List<Sala> escolherAlgoritmoOrdenacao(List<Sala> salas, String algoritmo) {
 		switch(algoritmo) {
 		case "FIFO":
 			break;
