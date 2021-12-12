@@ -40,3 +40,13 @@ html,body{
     border-bottom: 0 !important;
     margin-right: 1px;
 }
+
+.dropdown-menu {         
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.fc-toolbar-chunk{
+    min-width: 33% !important;
+    text-align: center !important;
+}
