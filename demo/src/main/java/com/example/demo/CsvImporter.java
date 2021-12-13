@@ -27,6 +27,8 @@ public class CsvImporter {
 	private static boolean comCaracteristica;
 	private static ArrayList<String> algoritmosEscolhidos;
 
+	private static ArrayList<int[]> printableResults = new ArrayList<int[]>();
+
 	// ALGORITMOS - sexta e sabado com mais alunos que lugares da sala, nao ter em
 	// conta as caracteristicas, ter em conta as caracteristicas
 	// --> mudar para apenas 1 metodo que é custom o overfit e que pode ter em conta
@@ -41,55 +43,64 @@ public class CsvImporter {
 	// salas disponiveis,
 	// numero de salas atribuidas com a caracteristica pedida
 
-
 	public static void main(String[] args) throws IOException, CsvException {
-		String fileNameAulas = "/Users/chainz/Desktop/ADS/adsAulas.csv";
-		String fileNameSala = "/Users/chainz/Desktop/ADS/adsSalas.csv";
+		// String fileNameAulas = "/Users/chainz/Desktop/ADS/adsAulas.csv";
+		// String fileNameSala = "/Users/chainz/Desktop/ADS/adsSalas.csv";
 
-		// String fileNameAulas = "D:\\ADS\\ADS - Salas.csv";
-		// String fileNameSala = "D:\\ADS\\abc10.csv";
+		String fileNameAulas = "D:\\ADS\\ADS - Aulas.csv";
+		String fileNameSala = "D:\\ADS\\abc10.csv";
 
-		String resultado = "";
 		overfitValues = new double[] { 0.05, 0.05, 0.05, 0.05, 0.20, 0.20 };
 		comCaracteristica = true;
 		algoritmosEscolhidos = new ArrayList<String>();
 		algoritmosEscolhidos.add("RANDOM");
 		algoritmosEscolhidos.add("LIFO");
 
-
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
-		List<Aula> aulasOriginal = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1).withSeparator(';')
-				.withType(Aula.class).build().parse();
-		
 		for (String algoritmo : algoritmosEscolhidos) {
+			String resultado = "D:\\ADS\\final" + algoritmo + ".csv";
 
-			List<Aula> aulas = new ArrayList<Aula>(aulasOriginal);
+			List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1)
+					.withSeparator(';').withType(Aula.class).build().parse();
+
 			adicionarCaracteristicas(salas, fileNameSala);
 
 			uniqueDates = getAllDates(aulas);
 			salas = escolherAlgoritmoOrdenacao(salas, algoritmo);
 			separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
 
-
 			Avaliacao avaliacao = new Avaliacao(aulas, salas);
-			int[] resultadosAvaliacao = avaliacao.getAvaliacao();
-			for (int i = 0; i != resultadosAvaliacao.length; i++) {
-				System.out.println(resultadosAvaliacao[i]);
-			}
+//			int[] resultadosAvaliacao = avaliacao.getAvaliacao();
+//			for (int i = 0; i != resultadosAvaliacao.length; i++) {
+//				System.out.println(resultadosAvaliacao[i]);
+//			}
+			printableResults.add(avaliacao.getAvaliacao());
 
-			contarAulasComSalasAtribuidas(aulas);
-
+//			contarAulasComSalasAtribuidas(aulas);
 
 			printCSVFinal(fileNameAulas, aulas, resultado);
+		}
+
+		for (int i = 0; i < printableResults.size(); i++) {
+			System.out.println(algoritmosEscolhidos.get(i));
+			for (int j = 0; j < printableResults.get(i).length; j++) {
+				if (j == 0)
+					System.out.println("Numero de aulas com salas atribuidas " + printableResults.get(i)[j]);
+				else if (j == 4)
+					System.out.println("Numero de aulas total " + printableResults.get(i)[j]);
+				else
+					System.out.println(printableResults.get(i)[j]);
+
+			}
+			System.out.println("========================================");
 		}
 
 	}
 
 	public static void resultado(String fileNameAulas, String fileNameSala, String path)
 			throws IllegalStateException, IOException, CsvException {
-
 
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
@@ -323,7 +334,7 @@ public class CsvImporter {
 			}
 		}
 	}
-	
+
 	private static List<Sala> escolherAlgoritmoOrdenacao(List<Sala> salas, String algoritmo) {
 		switch (algoritmo) {
 		case "FIFO":
