@@ -55,6 +55,24 @@ public class Aula {
 	public String getDiaSemana() {
 		return diaDaSemana;
 	}
+	
+	public int getDiaSemanaInt() {
+		switch(diaDaSemana) {
+		case "Seg":
+			return 0;
+		case "Ter":
+			return 1;
+		case "Qua":
+			return 2;
+		case "Qui":
+			return 3;
+		case "Sex":
+			return 4;
+		case "Sáb":
+			return 5;
+		}
+		return 10;
+	}
 
 	public String getInicio() {
 		return inicio;

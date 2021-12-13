@@ -13,7 +13,7 @@ public class Avaliacao {
 	private int numTrocasSala;
 	private int numSalasAtribComCaracPedida;
 	
-	private int NUM_METRICAS = 4;
+	private int NUM_METRICAS = 5;
 
 	 
 	Avaliacao(List<Aula> aulas, List<Sala> salas) {
@@ -25,6 +25,12 @@ public class Avaliacao {
 		this.numSalasAtribComCaracPedida = calcularNumSalasAtribComCaracPedida();
 	}
 	
+
+	private int calcularNumSalasDisponiveis() {
+		// TODO 
+		return 0;
+	}
+
 
 	private int calcularNumAulasComSalaAtribuida() {
 		int count = 0;
@@ -140,6 +146,7 @@ public class Avaliacao {
 		resultados[1] = numTrocasEdificio;
 		resultados[2] = numTrocasSala;
 		resultados[3] = numSalasAtribComCaracPedida;
+		resultados[4] = aulas.size();
 		return resultados;
 	}
 }
