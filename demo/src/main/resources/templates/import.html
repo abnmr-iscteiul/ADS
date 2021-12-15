@@ -30,7 +30,7 @@
 						<input class="col-7 mb-2" id="uploadFileSala" placeholder="Choose File" disabled="disabled"/>
 						<div class="fileUpload btn btn-primary bg-iscte col-4">
 							<span>Upload</span>
-							<input id="uploadBtnSala" type="file" class="upload" name="salas"/>
+							<input id="uploadBtnSala" type="file" class="upload" name="horarios"/>
 						</div>
 					</div>
 				</div>
@@ -42,7 +42,7 @@
 						<input class="col-7 mb-2" id="uploadFileHorario" placeholder="Choose File" disabled="disabled"/>
 						<div class="fileUpload btn btn-primary bg-iscte col-4">
 							<span>Upload</span>
-							<input id="uploadBtnHorario" type="file" class="upload" name="horarios"/>
+							<input id="uploadBtnHorario" type="file" class="upload" name="salas"/>
 						</div>
 					</div>
 				</div>
@@ -50,7 +50,7 @@
 						<button type="submit" class="btn btn-primary bg-iscte mt-4 w-50">Distribuir</button>
 				</div>
 			</div>
-		</form>
+		
 		<div class="row">
 			<div class="col-1 p-0">
 				<button class="btn btn-secondary btn-tab w-100">Parâmetros</button>
@@ -75,43 +75,43 @@
 					</div>
 					<div class="col">
 						<label for="rangeMonday" class="form-label m-0 px-1 bg-dark rounded-3 text-white fs-7" style="margin-left: 47% !important;">15</label>
-						<input type="range" min="0" max="30" class="form-range" id="rangeMonday" oninput="updateLabel(this)">
+						<input type="range" min="0" max="30" class="form-range" id="rangeMonday" oninput="updateLabel(this)"  name="segunda" >
 					</div>
 				</div>
 				<div class="row">
 					<div class="form-check col-4 my-2 ms-5 pt-3">
-						<input class="form-check-input" type="checkbox" value="" id="flexCheckTuesday">
+						<input class="form-check-input" type="checkbox" value="" id="flexCheckTuesday" >
 						<label class="form-check-label" for="flexCheckTuesday">
 							Terça feira
 						</label>
 					</div>
 					<div class="col">
 						<label for="rangeTuesday" class="form-label m-0 px-1 bg-dark rounded-3 text-white fs-7" style="margin-left: 47% !important;">15</label>
-						<input type="range" min="0" max="30" class="form-range" id="rangeTuesday" oninput="updateLabel(this)">
+						<input type="range" min="0" max="30" class="form-range" id="rangeTuesday" oninput="updateLabel(this)" name="terca">
 					</div>
 				</div>
 				<div class="row">
 					<div class="form-check col-4 my-2 ms-5 pt-3">
-						<input class="form-check-input" type="checkbox" value="" id="flexCheckWednesday">
+						<input class="form-check-input" type="checkbox" value="" id="flexCheckWednesday" >
 						<label class="form-check-label" for="flexCheckWednesday">
 							Quarta feira
 						</label>
 					</div>
 					<div class="col">
 						<label for="rangeWednesday" class="form-label m-0 px-1 bg-dark rounded-3 text-white fs-7" style="margin-left: 47% !important;">15</label>
-						<input type="range" min="0" max="30" class="form-range" id="rangeWednesday" oninput="updateLabel(this)">
+						<input type="range" min="0" max="30" class="form-range" id="rangeWednesday" oninput="updateLabel(this)" name="quarta">
 					</div>
 				</div>
 				<div class="row">
 					<div class="form-check col-4 my-2 ms-5 pt-3">
-						<input class="form-check-input" type="checkbox" value="" id="flexCheckThursday">
+						<input class="form-check-input" type="checkbox" value="" id="flexCheckThursday" >
 						<label class="form-check-label" for="flexCheckThursday">
 							Quinta feira
 						</label>
 					</div>
 					<div class="col">
 						<label for="rangeThursday" class="form-label m-0 px-1 bg-dark rounded-3 text-white fs-7" style="margin-left: 47% !important;">15</label>
-						<input type="range" min="0" max="30" class="form-range" id="rangeThursday" oninput="updateLabel(this)">
+						<input type="range" min="0" max="30" class="form-range" id="rangeThursday" oninput="updateLabel(this)" name="quinta">
 					</div>
 				</div>
 				<div class="row">
@@ -123,7 +123,7 @@
 					</div>
 					<div class="col">
 						<label for="rangeFriday" class="form-label m-0 px-1 bg-dark rounded-3 text-white fs-7" style="margin-left: 47% !important;">15</label>
-						<input type="range" min="0" max="30" class="form-range" id="rangeFriday" oninput="updateLabel(this)">
+						<input type="range" min="0" max="30" class="form-range" id="rangeFriday" oninput="updateLabel(this)" name="sexta">
 					</div>
 				</div>
 				<div class="row">
@@ -135,7 +135,7 @@
 					</div>
 					<div class="col">
 						<label for="rangeSaturday" class="form-label m-0 px-1 bg-dark rounded-3 text-white fs-7" style="margin-left: 47% !important;">15</label>
-						<input type="range" min="0" max="30" class="form-range" id="rangeSaturday" oninput="updateLabel(this)">
+						<input type="range" min="0" max="30" class="form-range" id="rangeSaturday" oninput="updateLabel(this)" name="sabado">
 					</div>
 				</div>
 			</div>
@@ -146,7 +146,7 @@
 				<div class="row justify-content-center">
 					<div class="col-8">
 						<div class="form-check">
-							<input class="form-check-input" type="radio" name="flexRadioCaract" id="flexRadioCaract" checked>
+							<input class="form-check-input" type="radio" name="flexRadioCaract" "caracter" id="flexRadioCaract" checked>
 							<label class="form-check-label" for="flexRadioCaract">
 							  Ter em conta as características da sala
 							</label>
@@ -168,32 +168,32 @@
 							<label class="form-check-label" for="flexCheckFIFO">
 							FIFO
 							</label>
-							<input class="form-check-input" type="checkbox" value="" id="flexCheckFIFO" checked>
+							<input class="form-check-input" type="checkbox" value="" id="flexCheckFIFO" name ="FIFO" checked>
 						</div>
 						<div class="form-check ps-5">
 							<label class="form-check-label" for="flexCheckLIFO">
 							LIFO
 							</label>
-							<input class="form-check-input" type="checkbox" value="" id="flexCheckLIFO">
+							<input class="form-check-input" type="checkbox" value="" name ="LIFO" id="flexCheckLIFO">
 						</div>
 						<div class="form-check ps-5">
 							<label class="form-check-label" for="flexCheckRandom">
 								Random
 							</label>
-							<input class="form-check-input" type="checkbox" value="" id="flexCheckRandom">
+							<input class="form-check-input" type="checkbox" value="" name ="random" id="flexCheckRandom">
 						</div>
 						<div class="form-check ps-5">
 							<label class="form-check-label" for="flexCheckLCF">
 								Lower Capacity First
 							</label>
-							<input class="form-check-input" type="checkbox" value="" id="flexCheckLCF">
+							<input class="form-check-input" type="checkbox" value="" name ="LCF" id="flexCheckLCF">
 						</div>
 					</div>
 				</div>
 				
 			</div>
 		</div>
-		
+		</form>
     </div>
 </body>
 </html>
