@@ -99,21 +99,23 @@ public class CsvImporter {
 
 	}
 
-	public ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path, double[] overfitValues,boolean comCaracteristica, ArrayList<String> algoritmosEscolhidos )
+	public static ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path, double[] overfitValues1,boolean comCaracteristica1, 
+			ArrayList<String> algoritmosEscolhidos1 )
 			throws IllegalStateException, IOException, CsvException {
 			
 		
-			this.overfitValues = overfitValues;
-			this.comCaracteristica = comCaracteristica;
-			this.algoritmosEscolhidos = algoritmosEscolhidos;
+			overfitValues = overfitValues1;
+			comCaracteristica = comCaracteristica1;
+			algoritmosEscolhidos = algoritmosEscolhidos1;
 			
 			List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 					.withType(Sala.class).build().parse();
-	
+			
+			
 	
 			for (String algoritmo : algoritmosEscolhidos) {
 				String resultado = path + algoritmo + ".csv";
-
+				System.out.println(algoritmo);
 				List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1)
 						.withSeparator(';').withType(Aula.class).build().parse();
 

@@ -73,14 +73,15 @@ public class controller {
 			overfitValues[5]=0;
 
 		ArrayList<String> algoritmosEscolhidos = new ArrayList<>();
+		
 		if(FIFO!=null)
-			algoritmosEscolhidos.add(FIFO);
+			algoritmosEscolhidos.add("FIFO");
 
 		if(LIFO!=null)
-			algoritmosEscolhidos.add(LIFO);
+			algoritmosEscolhidos.add("LIFO");
 		
 		if(LCF!=null)
-			algoritmosEscolhidos.add(LCF);
+			algoritmosEscolhidos.add("LCF");
 		
 		try (OutputStream os = Files.newOutputStream(filepath)) {
 			os.write(file.getBytes());
@@ -98,8 +99,7 @@ public class controller {
 			e.printStackTrace();
 		}
 	    try {
-	    	CsvImporter csv= new CsvImporter();
-	    	 resultado=csv.resultado(filepath.toString(), filepath2.toString(),Paths.get("src/main/resources", "final").toString(),overfitValues,caract,algoritmosEscolhidos);
+	    	 resultado=CsvImporter.resultado(filepath.toString(), filepath2.toString(),Paths.get("src/main/resources", "final").toString(),overfitValues,caract,algoritmosEscolhidos);
 	    	
 	    } catch (IllegalStateException | IOException | CsvException e) {
 			// TODO Auto-generated catch block
