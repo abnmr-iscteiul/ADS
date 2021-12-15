@@ -99,25 +99,43 @@ public class CsvImporter {
 
 	}
 
-	public static void resultado(String fileNameAulas, String fileNameSala, String path)
+	public ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path, double[] overfitValues,boolean comCaracteristica, ArrayList<String> algoritmosEscolhidos )
 			throws IllegalStateException, IOException, CsvException {
+			
+		
+			this.overfitValues = overfitValues;
+			this.comCaracteristica = comCaracteristica;
+			this.algoritmosEscolhidos = algoritmosEscolhidos;
+			
+			List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
+					.withType(Sala.class).build().parse();
+	
+	
+			for (String algoritmo : algoritmosEscolhidos) {
+				String resultado = path + algoritmo + ".csv";
 
-		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
-				.withType(Sala.class).build().parse();
+				List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1)
+						.withSeparator(';').withType(Aula.class).build().parse();
 
-		List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1).withSeparator(';')
-				.withType(Aula.class).build().parse();
+				adicionarCaracteristicas(salas, fileNameSala);
 
-		adicionarCaracteristicas(salas, fileNameSala);
+				uniqueDates = getAllDates(aulas);
+				salas = escolherAlgoritmoOrdenacao(salas, algoritmo);
+				separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
 
-		uniqueDates = getAllDates(aulas);
+				Avaliacao avaliacao = new Avaliacao(aulas, salas);
+//				int[] resultadosAvaliacao = avaliacao.getAvaliacao();
+//				for (int i = 0; i != resultadosAvaliacao.length; i++) {
+//					System.out.println(resultadosAvaliacao[i]);
+//				}
+				printableResults.add(avaliacao.getAvaliacao());
 
-		separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
+//				contarAulasComSalasAtribuidas(aulas);
 
-		// apagar isto no fim
-		contarAulasComSalasAtribuidas(aulas);
+				printCSVFinal(fileNameAulas, aulas, resultado);
+			}
 
-		printCSVFinal(fileNameAulas, aulas, path);
+		return printableResults;
 
 	}
 
