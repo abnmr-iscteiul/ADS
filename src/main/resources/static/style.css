@@ -50,3 +50,7 @@ html,body{
     min-width: 33% !important;
     text-align: center !important;
 }
+
+.fs-7{
+    font-size: 12px;
+}
