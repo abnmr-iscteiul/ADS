@@ -34,11 +34,14 @@ public class controller {
 	}
 	
 	@PostMapping("/post")
-	public String post(Model model,@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2,@RequestParam(required=false,value="FIFO") String FIFO,
-			@RequestParam(required=false,value="LIFO") String LIFO, @RequestParam(required=false,value="random") String random, @RequestParam(required=false,value="LCF") String LCF,
+	public String post(Model model,@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2,
+			@RequestParam(required=false,value="FIFO") String FIFO,
+			@RequestParam(required=false,value="LIFO") String LIFO, @RequestParam(required=false,value="random") String random,
+			@RequestParam(required=false,value="LCF") String LCF,
 			@RequestParam(required=false,value="segunda") String segunda,
 			@RequestParam(required=false,value="terca") String terca, @RequestParam(required=false,value="quarta") String quarta,
-			@RequestParam(required=false,value="quinta") String quinta, @RequestParam(required=false,value="sexta") String sexta, @RequestParam(required=false,value="sabado") String sabado
+			@RequestParam(required=false,value="quinta") String quinta, @RequestParam(required=false,value="sexta") String sexta, 
+			@RequestParam(required=false,value="sabado") String sabado
 			, @RequestParam(required=false,value="caracter") String caracter) {
 		boolean caract;
 		if(caracter!=null)
@@ -82,6 +85,10 @@ public class controller {
 		
 		if(LCF!=null)
 			algoritmosEscolhidos.add("LCF");
+		if(random!=null)
+			algoritmosEscolhidos.add("RANDOM");
+		if(LCF!=null)
+			algoritmosEscolhidos.add("LOWERCAPACITYFIRST");
 		
 		try (OutputStream os = Files.newOutputStream(filepath)) {
 			os.write(file.getBytes());
@@ -99,7 +106,8 @@ public class controller {
 			e.printStackTrace();
 		}
 	    try {
-	    	 resultado=CsvImporter.resultado(filepath.toString(), filepath2.toString(),Paths.get("src/main/resources", "final").toString(),overfitValues,caract,algoritmosEscolhidos);
+	    	 resultado=CsvImporter.resultado(filepath.toString(), filepath2.toString(),Paths.get("src/main/resources", "final").toString(),
+	    			 overfitValues,caract,algoritmosEscolhidos);
 	    	
 	    } catch (IllegalStateException | IOException | CsvException e) {
 			// TODO Auto-generated catch block
