@@ -54,3 +54,11 @@ html,body{
 .fs-7{
     font-size: 12px;
 }
+
+.mh-90{
+    max-height: 90% !important;
+}
+
+.h-90{
+    height: 90% !important;
+}
