@@ -109,7 +109,7 @@ public class controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
+	    System.out.println(segunda + terca);
 	    String csvOutputFile;
 		try {
 			for (int i=0; i<algoritmosEscolhidos.size();i++) {
