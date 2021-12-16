@@ -42,6 +42,7 @@
 			dropdownCreator()
 			plotData()
 			handleTable()
+			dropdownAlgorithmCreator()
 		});
 		
 		var csv = /*[[${FIFO}]]*/ 'default';
@@ -55,6 +56,7 @@
 		var splitedRows = []
 		var dictTimetable = {}
 		var arrayResults = []
+		var rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro']
 
 		rows.forEach(row => {
 			splited = row.split(';')
@@ -81,7 +83,12 @@
 		})
 
 		function dropdownAlgorithmCreator(){
-			$("#dropdownAlgorithmUl").innerHTML += "<li><a class='dropdown-item' href='#''>Action</a></li>"
+			console.log('yoo')
+			resultado.forEach( result => {
+				console.log('yooo')
+				console.log($("#dropdownAlgorithmUl"))
+				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='#'>"+rainbomTableAlgorithms[result[5]]+"</a></li>")
+			})
 		}
 
 		function showTable(){
@@ -172,7 +179,6 @@
 
 		function plotData(){
 			data = []
-			rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro']
 			i = 0
 
 			resultado.forEach( result => {
@@ -215,9 +221,6 @@
 				  Algoritmo
 				</button>
 				<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="dropdownAlgorithmUl">
-				  <li><a class="dropdown-item" href="#">Action</a></li>
-				  <li><a class="dropdown-item" href="#">Another action</a></li>
-				  <li><a class="dropdown-item" href="#">Something else here</a></li>
 				</ul>
 			</div>  
 			<div class="col-2 d-grid gap-2">
