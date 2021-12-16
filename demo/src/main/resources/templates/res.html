@@ -44,7 +44,10 @@
 			handleTable()
 		});
 		
-		var csv = /*[[${csv}]]*/ 'default';
+		var csv = /*[[${FIFO}]]*/ 'default';
+		var LIFO = /*[[${LIFO}]]*/ 'default';
+		var random = /*[[${RANDOM}]]*/ 'default';
+		var LOWERCAPACITYFIRST = /*[[${LOWERCAPACITYFIRST}]]*/ 'default';
 		var resultado = /*[[${resultado}]]*/ 'default';
 		console.log(resultado);
 		
@@ -203,38 +206,7 @@
     </nav>
 
     
-    <div class="container h-75">
-		<form method="post" th:action="@{/post}" enctype="multipart/form-data">
-			<div class="row justify-content-center mt-4" accept-charset="utf-8">
-				<div class="p-4 col text-center">
-					<div class="row">
-						<label class="text-iscte" for="salas">Lista de salas:</label>
-					</div>
-					<div class="row mt-3">
-						<input class="col-7 mb-2" id="uploadFileSala" placeholder="Choose File" disabled="disabled"/>
-						<div class="fileUpload btn btn-primary bg-primary col-4">
-							<span>Upload</span>
-							<input id="uploadBtnSala" type="file" class="upload" name="salas"/>
-						</div>
-					</div>
-				</div>
-				<div class="p-4 col text-center">
-					<div class="row">
-						<label class="text-iscte" for="horarios">Horários a preencher:</label>
-					</div>
-					<div class="row mt-3">
-						<input class="col-7 mb-2" id="uploadFileHorario" placeholder="Choose File" disabled="disabled"/>
-						<div class="fileUpload btn btn-primary bg-primary col-4">
-							<span>Upload</span>
-							<input id="uploadBtnHorario" type="file" class="upload" name="horarios"/>
-						</div>
-					</div>
-				</div>
-				<div class="mt-4 pt-3 col text-center">
-						<button type="submit" class="btn btn-primary bg-primary mt-4 w-50">Distribuir</button>
-				</div>
-			</div>
-		</form>
+    <div class="container h-75 mt-4">
 		<div class="row">
 			<div class="col-1 p-0">
 				<button class="btn btn-dark btn-tab w-100" onclick="handleTable()">Resultado</button>
