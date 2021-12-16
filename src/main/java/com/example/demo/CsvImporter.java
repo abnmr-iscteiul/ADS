@@ -71,12 +71,12 @@ public class CsvImporter {
 			salas = escolherAlgoritmoOrdenacao(salas, algoritmo);
 			separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
 
-			Avaliacao avaliacao = new Avaliacao(aulas, salas);
+			//Avaliacao avaliacao = new Avaliacao(aulas, salas);
 //			int[] resultadosAvaliacao = avaliacao.getAvaliacao();
 //			for (int i = 0; i != resultadosAvaliacao.length; i++) {
 //				System.out.println(resultadosAvaliacao[i]);
 //			}
-			printableResults.add(avaliacao.getAvaliacao());
+			//printableResults.add(avaliacao.getAvaliacao());
 
 //			contarAulasComSalasAtribuidas(aulas);
 
@@ -125,7 +125,7 @@ public class CsvImporter {
 				salas = escolherAlgoritmoOrdenacao(salas, algoritmo);
 				separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
 
-				Avaliacao avaliacao = new Avaliacao(aulas, salas);
+				Avaliacao avaliacao = new Avaliacao(aulas, salas,algoritmo);
 //				int[] resultadosAvaliacao = avaliacao.getAvaliacao();
 //				for (int i = 0; i != resultadosAvaliacao.length; i++) {
 //					System.out.println(resultadosAvaliacao[i]);

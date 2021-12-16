@@ -41,7 +41,7 @@
 			showTable()
 			dropdownCreator()
 			plotData()
-			handleGraph()
+			handleTable()
 		});
 		
 		var csv = /*[[${csv}]]*/ 'default';
@@ -80,6 +80,9 @@
 		function showTable(){
 			var table = new Tabulator("#tabulator", {
 				layout:"fitDataTable",
+				pagination:true,
+				paginationSize:50,
+				paginationSizeSelector:true,
 				columns:[
         			{title:"Curso", field:"course"},
 					{title:"Unidade de Execução", field:"unit"},
@@ -97,7 +100,7 @@
 					{title:"Lotação", field:"capacity"},
 					{title:"Características reais da sala", field:"realCharacteristics"},
 				],
-				data: arrayResults.splice(1,100), //assign data to table
+				data: arrayResults //assign data to table
 			});
 		}
 		
@@ -234,13 +237,13 @@
 		</form>
 		<div class="row">
 			<div class="col-1 p-0">
-				<button class="btn btn-secondary btn-tab w-100" onclick="handleTable()">Resultado</button>
+				<button class="btn btn-dark btn-tab w-100" onclick="handleTable()">Resultado</button>
 			</div>
 			<div class="col-1 p-0">
-				<button class="btn btn-secondary btn-tab w-100" onclick="handleCalendar()">Horários</button>
+				<button class="btn btn-dark btn-tab w-100" onclick="handleCalendar()">Horários</button>
 			</div>
 			<div class="col-1 p-0">
-				<button class="btn btn-secondary btn-tab w-100" onclick="handleGraph()">Métricas</button>
+				<button class="btn btn-dark btn-tab w-100" onclick="handleGraph()">Métricas</button>
 			</div>
 		</div>
 		<div class="row mh-75 h-75 overflow-auto border border-dark">

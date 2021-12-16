@@ -79,12 +79,8 @@ public class controller {
 		
 		if(FIFO!=null)
 			algoritmosEscolhidos.add("FIFO");
-
 		if(LIFO!=null)
 			algoritmosEscolhidos.add("LIFO");
-		
-		if(LCF!=null)
-			algoritmosEscolhidos.add("LCF");
 		if(random!=null)
 			algoritmosEscolhidos.add("RANDOM");
 		if(LCF!=null)
@@ -116,15 +112,15 @@ public class controller {
 	    
 	    String csvOutputFile;
 		try {
-			csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"));
-			model.addAttribute("csv",csvOutputFile);
+			for (int i=0; i<algoritmosEscolhidos.size();i++) {
+				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+algoritmosEscolhidos.get(i)+".csv"));
+				model.addAttribute(algoritmosEscolhidos.get(i),csvOutputFile);
+			}
 			model.addAttribute("resultado",resultado);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	
 		return "res";
 	}
 	
