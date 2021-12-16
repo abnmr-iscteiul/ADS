@@ -57,7 +57,7 @@
 		var arrayResults = []
 		var totalClasses = resultado[0][4]
 		var rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro']
-		var rainbomTableAlgorithms2 = ['FIFO', 'LIFO', 'RANDOM', 'LCF']
+		var rainbomTableAlgorithms2 = ['FIFO', 'LIFO', 'RANDOM', 'LOWERCAPACITYFIRST']
 		
 		
 		rows.forEach(row => {
@@ -88,8 +88,10 @@
 
 		function dropdownAlgorithmCreator(){
 			$("#dropdownAlgorithm").html('Algoritmo (' + nome + ')')
+			$("#download").attr("href", "/download/" + rainbomTableAlgorithms2[rainbomTableAlgorithms.indexOf(nome)]);
 			resultado.forEach( result => {
-				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='"+"/"+rainbomTableAlgorithms2[result[5]]+"'>"+rainbomTableAlgorithms[result[5]]+"</a></li>")
+				console.log(result)
+				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='"+"/"+rainbomTableAlgorithms2[result[4]]+"'>"+rainbomTableAlgorithms[result[4]]+"</a></li>")
 			})
 		}
 
@@ -230,7 +232,7 @@
 				</ul>
 			</div>  
 			<div class="col-2 d-grid gap-2">
-				<button class="btn btn-primary" type="button">Download</button>
+				<a id="download"><button class="btn btn-primary" type="button">Download</button></a>
 			</div>
 		</div>
 		<div class="row mt-4">
