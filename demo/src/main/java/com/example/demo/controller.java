@@ -90,13 +90,18 @@ public class controller {
 			@RequestParam(required=false,value="terca") String terca, @RequestParam(required=false,value="quarta") String quarta,
 			@RequestParam(required=false,value="quinta") String quinta, @RequestParam(required=false,value="sexta") String sexta, 
 			@RequestParam(required=false,value="sabado") String sabado
-			, @RequestParam(required=false,value="caracter") String caracter) {
+			, @RequestParam(required=false,value="flexRadioCaract") String caracter) {
 		boolean caract;
+		
+		System.out.println(caracter);
 		
 		if(caracter!=null)
 			caract=true;
 		else
 			caract=false;
+		
+		
+		
 		Path filepath = Paths.get("src/main/resources", file.getOriginalFilename());
 		double[] overfitValues= new double[6];
 		if(segunda!=null)

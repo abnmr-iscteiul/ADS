@@ -20,8 +20,8 @@ import java.util.*;
 
 public class CsvImporter {
 
-	//private static List<String[]> csvReader;
-	//private static 
+	private static List<String[]> csvReader;
+	private static ArrayList<String> uniqueDates = new ArrayList<String>();
 
 	private static double[] overfitValues;
 	private static boolean comCaracteristica;
@@ -44,8 +44,9 @@ public class CsvImporter {
 	public static ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path, double[] overfitValues1,boolean comCaracteristica1, 		
 		ArrayList<String> algoritmosEscolhidos1 )
 		throws IllegalStateException, IOException, CsvException {
+		
+			System.out.println(comCaracteristica1);
 			ArrayList<int[]> printableResults = new ArrayList<int[]>();
-			ArrayList<String> uniqueDates = new ArrayList<String>();
 			overfitValues = overfitValues1;
 			comCaracteristica = comCaracteristica1;
 			algoritmosEscolhidos = algoritmosEscolhidos1;
@@ -171,7 +172,6 @@ public class CsvImporter {
 
 	private static void adicionarCaracteristicas(List<Sala> salas, String fileName)
 			throws FileNotFoundException, IOException, CsvException {
-		List<String[]> csvReader;
 		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
 		try (CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withCSVParser(csvParser).build()) {
 
