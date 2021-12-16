@@ -45,13 +45,11 @@
 			dropdownAlgorithmCreator()
 		});
 		var nome = /*[[${nome}]]*/ 'default';
-		console.log(nome);
 		var csv = /*[[${CSV}]]*/ 'default';
 		var LIFO = /*[[${LIFO}]]*/ 'default';
 		var random = /*[[${RANDOM}]]*/ 'default';
 		var LOWERCAPACITYFIRST = /*[[${LOWERCAPACITYFIRST}]]*/ 'default';
 		var resultado = /*[[${resultado}]]*/ 'default';
-		console.log(resultado);
 		
 		var rows = csv.split('\n').slice(0, -1);
 		var splitedRows = []
@@ -86,10 +84,8 @@
 		})
 
 		function dropdownAlgorithmCreator(){
-			console.log('yoo')
+			$("#dropdownAlgorithm").html('Algoritmo (' + nome + ')')
 			resultado.forEach( result => {
-				console.log('yooo')
-				console.log($("#dropdownAlgorithmUl"))
 				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='"+"/"+rainbomTableAlgorithms2[result[5]]+"'>"+rainbomTableAlgorithms[result[5]]+"</a></li>")
 			})
 		}
@@ -245,7 +241,7 @@
 			<div class="bg-light col justify-content-center">	 
 				<div class="row justify-content-center" id="course-row">
 					<div class="dropdown d-grid gap-2 col p-3 text-center" id="course-dropdown" >
-						
+						<h2>Curso: MEI</h2>
 					</div>
 				</div> 
 				<div id='calendar'></div>
