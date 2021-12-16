@@ -42,20 +42,24 @@
 			dropdownCreator()
 			plotData()
 			handleTable()
+			dropdownAlgorithmCreator()
 		});
-		
-		var csv = /*[[${FIFO}]]*/ 'default';
+		var nome = /*[[${nome}]]*/ 'default';
+		var csv = /*[[${CSV}]]*/ 'default';
 		var LIFO = /*[[${LIFO}]]*/ 'default';
 		var random = /*[[${RANDOM}]]*/ 'default';
 		var LOWERCAPACITYFIRST = /*[[${LOWERCAPACITYFIRST}]]*/ 'default';
 		var resultado = /*[[${resultado}]]*/ 'default';
-		console.log(resultado);
 		
 		var rows = csv.split('\n').slice(0, -1);
 		var splitedRows = []
 		var dictTimetable = {}
 		var arrayResults = []
-
+		var totalClasses = resultado[0][4]
+		var rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro']
+		var rainbomTableAlgorithms2 = ['FIFO', 'LIFO', 'RANDOM', 'LOWERCAPACITYFIRST']
+		
+		
 		rows.forEach(row => {
 			splited = row.split(';')
 			splitedRows.push(splited)
@@ -79,6 +83,17 @@
 				}
 			)
 		})
+
+
+
+		function dropdownAlgorithmCreator(){
+			$("#dropdownAlgorithm").html('Algoritmo (' + nome + ')')
+			$("#download").attr("href", "/download/" + rainbomTableAlgorithms2[rainbomTableAlgorithms.indexOf(nome)]);
+			resultado.forEach( result => {
+				console.log(result)
+				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='"+"/"+rainbomTableAlgorithms2[result[4]]+"'>"+rainbomTableAlgorithms[result[4]]+"</a></li>")
+			})
+		}
 
 		function showTable(){
 			var table = new Tabulator("#tabulator", {
@@ -144,6 +159,7 @@
 			$("#course-row").hide();
 			$("#tabulator").show();
 			$("#radialGraph").hide();
+			$("#graph-row").hide();
 		}
 
 		function handleCalendar(){
@@ -151,6 +167,7 @@
 			$("#course-row").show();
 			$("#tabulator").hide();
 			$("#radialGraph").hide();
+			$("#graph-row").hide();
 		}
 
 		function handleGraph(){
@@ -158,6 +175,7 @@
 			$("#course-row").hide();
 			$("#tabulator").hide();
 			$("#radialGraph").show();
+			$("#graph-row").show();
 		}
 
 
@@ -169,15 +187,15 @@
 		function plotData(){
 			data = []
 			i = 0
-
+			$("#graph-total").append("<h2 class='fs-6'>Nº Total de Aulas: " + totalClasses + "</h2>")
 			resultado.forEach( result => {
+				result.splice(4, 1);
 				data.push(
 					{
-						type: 'scatterpolar',
-						r: result,
-						theta: ['A','B','C', 'D', 'E'],
-						fill: 'toself',
-						name: 'Group' + i
+						type: 'bar',
+						y: result,
+						x: ['Nº Aulas com sala atribuída','Nº Trocas de edifício','Nº Trocas de Sala', 'Nº Salas atribuídas com característica pedida'],
+						name: rainbomTableAlgorithms[result[4]]
 					}
 				)
 				i += 1
@@ -202,12 +220,22 @@
 </head>
 <body>
     <nav class="bg-primary p-1">
-        <h1 class="text-white text-center"> Distribuidor de Salas</h1>
-    </nav>
-
-    
-    <div class="container h-75 mt-4">
-		<div class="row">
+        <a href ="/"><h1 class="text-white text-center"> Distribuidor de Salas</h1></a>
+    </nav> 
+    <div class="container h-100 mt-4">
+		<div class="row justify-content-center">
+			<div class="dropdown d-grid gap-2 col-4">
+				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownAlgorithm" data-bs-toggle="dropdown" aria-expanded="false">
+				  Algoritmo
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="dropdownAlgorithmUl">
+				</ul>
+			</div>  
+			<div class="col-2 d-grid gap-2">
+				<a id="download"><button class="btn btn-primary" type="button">Download</button></a>
+			</div>
+		</div>
+		<div class="row mt-4">
 			<div class="col-1 p-0">
 				<button class="btn btn-dark btn-tab w-100" onclick="handleTable()">Resultado</button>
 			</div>
@@ -222,7 +250,11 @@
 			<div class="bg-light col justify-content-center">	 
 				<div class="row justify-content-center" id="course-row">
 					<div class="dropdown d-grid gap-2 col p-3 text-center" id="course-dropdown" >
-						
+						<h2>Curso: MEI</h2>
+					</div>
+				</div> 
+				<div class="row justify-content-center" id="graph-row">
+					<div class="dropdown d-grid gap-2 col p-3 text-center" id="graph-total" >
 					</div>
 				</div> 
 				<div id='calendar'></div>

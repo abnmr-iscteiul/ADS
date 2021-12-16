@@ -136,7 +136,7 @@ public class Avaliacao {
 	private int calcularNumSalasAtribComCaracPedida() {
 		int count = 0;
 		for (Aula aula : aulas) {
-			if(aula.getCaracteristicasReaisDaSala().contains(aula.getCaracteristicaPedida())) {
+			if(aula.getCaracteristicasReaisDaSala().contains(aula.getCaracteristicaPedida()) && !aula.getCaracteristicaPedida().isBlank()) {
 				count++;
 			}
 		}
