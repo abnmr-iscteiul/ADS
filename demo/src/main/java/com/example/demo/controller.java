@@ -34,10 +34,10 @@ public class controller {
 				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"FIFO"+".csv"));
 				model.addAttribute("CSV",csvOutputFile);	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		model.addAttribute("resultado",resultado);
+		model.addAttribute("nome","FIFO");		
 		return "res";
 	}
 	
@@ -48,10 +48,10 @@ public class controller {
 				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"LIFO"+".csv"));
 				model.addAttribute("CSV",csvOutputFile);	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		model.addAttribute("resultado",resultado);
+		model.addAttribute("nome","LIFO");		
 		return "res";
 	}
 	
@@ -62,10 +62,10 @@ public class controller {
 				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"RANDOM"+".csv"));
 				model.addAttribute("CSV",csvOutputFile);	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		model.addAttribute("resultado",resultado);
+		model.addAttribute("nome","Aleatório");		
 		return "res";
 	}
 	@GetMapping("/LCF")
@@ -75,16 +75,12 @@ public class controller {
 				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"LOWERCAPACITYFIRST"+".csv"));
 				model.addAttribute("CSV",csvOutputFile);	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		model.addAttribute("resultado",resultado);
+		model.addAttribute("nome","Menor capacidade primeiro");		
 		return "res";
-	}
-
-	
-	
-	
+	}	
 	@PostMapping("/post")
 	public String post(Model model,@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2,
 			@RequestParam(required=false,value="FIFO") String FIFO,
@@ -142,7 +138,6 @@ public class controller {
 		try (OutputStream os = Files.newOutputStream(filepath)) {
 			os.write(file.getBytes());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -151,7 +146,6 @@ public class controller {
 		try (OutputStream os = Files.newOutputStream(filepath2)) {
 	        os.write(file2.getBytes());
 	    } catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    try {
@@ -159,16 +153,19 @@ public class controller {
 	    			 overfitValues,caract,algoritmosEscolhidos);
 	    	 model.addAttribute("resultado",resultado);
 	    } catch (IllegalStateException | IOException | CsvException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    System.out.println(segunda + terca);
+	    for(int i=0;i<algoritmosEscolhidos.size();i++) {
+	    	
+	    }
+	    	
 	    String csvOutputFile;
 		try {
 			csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+algoritmosEscolhidos.get(0)+".csv"));
-			model.addAttribute("CSV",csvOutputFile);		
+			model.addAttribute("CSV",csvOutputFile);
+			model.addAttribute("nome",algoritmosEscolhidos.get(0));		
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "res";
