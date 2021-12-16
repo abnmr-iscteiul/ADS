@@ -27,11 +27,63 @@ public class controller {
 		return "import";
 	}
 	
-	@GetMapping("/res")
-	public String mappingRes(Model model) {		
-		
+	@GetMapping("/FIFO")
+	public String fifo(Model model) {		
+		String csvOutputFile;
+		try {
+				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"FIFO"+".csv"));
+				model.addAttribute("CSV",csvOutputFile);	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		model.addAttribute("resultado",resultado);
 		return "res";
 	}
+	
+	@GetMapping("/LIFO")
+	public String lifo(Model model) {		
+		String csvOutputFile;
+		try {
+				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"LIFO"+".csv"));
+				model.addAttribute("CSV",csvOutputFile);	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		model.addAttribute("resultado",resultado);
+		return "res";
+	}
+	
+	@GetMapping("/RANDOM")
+	public String random(Model model) {		
+		String csvOutputFile;
+		try {
+				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"RANDOM"+".csv"));
+				model.addAttribute("CSV",csvOutputFile);	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		model.addAttribute("resultado",resultado);
+		return "res";
+	}
+	@GetMapping("/LCF")
+	public String lcf(Model model) {		
+		String csvOutputFile;
+		try {
+				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"LOWERCAPACITYFIRST"+".csv"));
+				model.addAttribute("CSV",csvOutputFile);	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		model.addAttribute("resultado",resultado);
+		return "res";
+	}
+
+	
+	
 	
 	@PostMapping("/post")
 	public String post(Model model,@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2,
@@ -44,6 +96,7 @@ public class controller {
 			@RequestParam(required=false,value="sabado") String sabado
 			, @RequestParam(required=false,value="caracter") String caracter) {
 		boolean caract;
+		
 		if(caracter!=null)
 			caract=true;
 		else
@@ -104,7 +157,7 @@ public class controller {
 	    try {
 	    	 resultado=CsvImporter.resultado(filepath.toString(), filepath2.toString(),Paths.get("src/main/resources", "final").toString(),
 	    			 overfitValues,caract,algoritmosEscolhidos);
-	    	
+	    	 model.addAttribute("resultado",resultado);
 	    } catch (IllegalStateException | IOException | CsvException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -112,11 +165,8 @@ public class controller {
 	    System.out.println(segunda + terca);
 	    String csvOutputFile;
 		try {
-			for (int i=0; i<algoritmosEscolhidos.size();i++) {
-				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+algoritmosEscolhidos.get(i)+".csv"));
-				model.addAttribute(algoritmosEscolhidos.get(i),csvOutputFile);
-			}
-			model.addAttribute("resultado",resultado);
+			csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+algoritmosEscolhidos.get(0)+".csv"));
+			model.addAttribute("CSV",csvOutputFile);		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

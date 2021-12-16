@@ -45,7 +45,7 @@
 			dropdownAlgorithmCreator()
 		});
 		
-		var csv = /*[[${FIFO}]]*/ 'default';
+		var csv = /*[[${CSV}]]*/ 'default';
 		var LIFO = /*[[${LIFO}]]*/ 'default';
 		var random = /*[[${RANDOM}]]*/ 'default';
 		var LOWERCAPACITYFIRST = /*[[${LOWERCAPACITYFIRST}]]*/ 'default';
@@ -57,7 +57,9 @@
 		var dictTimetable = {}
 		var arrayResults = []
 		var rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro']
-
+		var rainbomTableAlgorithms2 = ['FIFO', 'LIFO', 'RANDOM', 'LCF']
+		
+		
 		rows.forEach(row => {
 			splited = row.split(';')
 			splitedRows.push(splited)
@@ -87,7 +89,7 @@
 			resultado.forEach( result => {
 				console.log('yooo')
 				console.log($("#dropdownAlgorithmUl"))
-				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='#'>"+rainbomTableAlgorithms[result[5]]+"</a></li>")
+				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='"+"/"+rainbomTableAlgorithms2[result[5]]+"'>"+rainbomTableAlgorithms[result[5]]+"</a></li>")
 			})
 		}
 
@@ -212,7 +214,7 @@
 </head>
 <body>
     <nav class="bg-primary p-1">
-        <h1 class="text-white text-center"> Distribuidor de Salas</h1>
+        <a href ="/"><h1 class="text-white text-center"> Distribuidor de Salas</h1></a>
     </nav> 
     <div class="container h-100 mt-4">
 		<div class="row justify-content-center">
