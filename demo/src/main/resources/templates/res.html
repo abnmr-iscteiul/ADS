@@ -80,6 +80,10 @@
 			)
 		})
 
+		function dropdownAlgorithmCreator(){
+			$("#dropdownAlgorithmUl").innerHTML += "<li><a class='dropdown-item' href='#''>Action</a></li>"
+		}
+
 		function showTable(){
 			var table = new Tabulator("#tabulator", {
 				layout:"fitDataTable",
@@ -168,16 +172,16 @@
 
 		function plotData(){
 			data = []
+			rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro']
 			i = 0
 
 			resultado.forEach( result => {
 				data.push(
 					{
-						type: 'scatterpolar',
-						r: result,
-						theta: ['A','B','C', 'D', 'E'],
-						fill: 'toself',
-						name: 'Group' + i
+						type: 'bar',
+						y: result,
+						x: ['Nº Aulas com sala atribuída','Nº Trocas de edifício','Nº Trocas de Sala', 'Nº Salas atribuídas com característica pedida', 'Nº Total de aulas'],
+						name: rainbomTableAlgorithms[result[5]]
 					}
 				)
 				i += 1
@@ -203,11 +207,24 @@
 <body>
     <nav class="bg-primary p-1">
         <h1 class="text-white text-center"> Distribuidor de Salas</h1>
-    </nav>
-
-    
-    <div class="container h-75 mt-4">
-		<div class="row">
+    </nav> 
+    <div class="container h-100 mt-4">
+		<div class="row justify-content-center">
+			<div class="dropdown d-grid gap-2 col-4">
+				<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownAlgorithm" data-bs-toggle="dropdown" aria-expanded="false">
+				  Algoritmo
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="dropdownAlgorithmUl">
+				  <li><a class="dropdown-item" href="#">Action</a></li>
+				  <li><a class="dropdown-item" href="#">Another action</a></li>
+				  <li><a class="dropdown-item" href="#">Something else here</a></li>
+				</ul>
+			</div>  
+			<div class="col-2 d-grid gap-2">
+				<button class="btn btn-primary" type="button">Download</button>
+			</div>
+		</div>
+		<div class="row mt-4">
 			<div class="col-1 p-0">
 				<button class="btn btn-dark btn-tab w-100" onclick="handleTable()">Resultado</button>
 			</div>
