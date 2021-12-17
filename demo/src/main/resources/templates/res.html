@@ -74,7 +74,7 @@
 		var rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro']
 		var rainbomTableAlgorithms2 = ['FIFO', 'LIFO', 'RANDOM', 'LOWERCAPACITYFIRST']
 		
-		rows.shift()
+		
 		rows.forEach(row => {
 			splited = row.split(';')
 			splitedRows.push(splited)
@@ -99,12 +99,18 @@
 			)
 		})
 		
-		//arrayResults.shift();
+		const firstLine = arrayResults.shift();
+
+		
+		console.log(firstLine);
+
+
 
 		function dropdownAlgorithmCreator(){
 			$("#dropdownAlgorithm").html('Algoritmo (' + nome + ')')
 			$("#download").attr("href", "/download/" + rainbomTableAlgorithms2[rainbomTableAlgorithms.indexOf(nome)]);
 			resultado.forEach( result => {
+				console.log(result)
 				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='"+"/"+rainbomTableAlgorithms2[result[4]]+"'>"+rainbomTableAlgorithms[result[4]]+"</a></li>")
 			})
 		}
@@ -116,19 +122,19 @@
 				paginationSize:50,
 				paginationSizeSelector:true,
 				columns:[
-        			{title:"Curso", field:"course"},
-					{title:"Unidade de Execução", field:"unit"},
-					{title:"Turno", field:"shift"},
-					{title:"Turma", field:"class"},
-					{title:"Inscritos no turno", field:"enrolled"},
-					{title:"Dia da Semana", field:"weekday"},
-					{title:"Início", field:"start"},
-					{title:"Fim", field:"end"},
-					{title:"Dia", field:"date"},
-					{title:"Características da sala pedida para a aula", field:"characteristics"},
-					{title:"Sala da aula", field:"classroom"},
-					{title:"Lotação", field:"capacity"},
-					{title:"Características reais da sala", field:"realCharacteristics"},
+        			{title:"Curso", field:"course", headerFilter:true},
+					{title:"Unidade de Execução", field:"unit", headerFilter:true},
+					{title:"Turno", field:"shift", headerFilter:true},
+					{title:"Turma", field:"class", headerFilter:true},
+					{title:"Inscritos no turno", field:"enrolled", headerFilter:true},
+					{title:"Dia da Semana", field:"weekday", headerFilter:true},
+					{title:"Início", field:"start", headerFilter:true},
+					{title:"Fim", field:"end", headerFilter:true},
+					{title:"Dia", field:"date", headerFilter:true},
+					{title:"Características da sala pedida para a aula", field:"characteristics", headerFilter:true},
+					{title:"Sala da aula", field:"classroom", headerFilter:true},
+					{title:"Lotação", field:"capacity", headerFilter:true},
+					{title:"Características reais da sala", field:"realCharacteristics", headerFilter:true},
 				],
 				data: arrayResults //assign data to table
 			});
@@ -144,7 +150,6 @@
 						</button>\
 					<ul class='dropdown-menu row' aria-labelledby='dropdownMenuButton1'>"
 					
-			console.log(csv)
 
 			Object.keys(dictTimetable).forEach(key => {
 				list += "<li class='dropdown-item' onclick='showCalendar(this)'>" + key + "</li>"
