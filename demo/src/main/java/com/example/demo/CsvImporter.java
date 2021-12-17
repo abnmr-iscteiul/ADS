@@ -26,59 +26,57 @@ public class CsvImporter {
 	private static double[] overfitValues;
 	private static boolean comCaracteristica;
 	private static ArrayList<String> algoritmosEscolhidos;
-	
+
 	// ALGORITMOS - sexta e sabado com mais alunos que lugares da sala, nao ter em
 	// conta as caracteristicas, ter em conta as caracteristicas
 	// --> mudar para apenas 1 metodo que é custom o overfit e que pode ter em conta
 	// as caracteristicas da sala ou nao
-	
+
 	// LIFO, FIFO, Random (DONE)
 	// algoritmo que tenta atribuir primeiro as salas com menor capacidade
-	
+
 	// METRICAS DE AVALIAÇAO - numero de aulas com sala atribuida,
 	// trocas de edificio,
 	// mudanças de sala,
 	// salas disponiveis,
 	// numero de salas atribuidas com a caracteristica pedida
-	
-	public static ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path, double[] overfitValues1,boolean comCaracteristica1, 		
-		ArrayList<String> algoritmosEscolhidos1 )
-		throws IllegalStateException, IOException, CsvException {
-		
-			System.out.println(comCaracteristica1);
-			ArrayList<int[]> printableResults = new ArrayList<int[]>();
-			overfitValues = overfitValues1;
-			comCaracteristica = comCaracteristica1;
-			algoritmosEscolhidos = algoritmosEscolhidos1;
-			
-			List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
-					.withType(Sala.class).build().parse();
-			
-			
-	
-			for (String algoritmo : algoritmosEscolhidos) {
-				String resultado = path + algoritmo + ".csv";
-				System.out.println(algoritmo);
-				List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1)
-						.withSeparator(';').withType(Aula.class).build().parse();
 
-				adicionarCaracteristicas(salas, fileNameSala);
+	public static ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path,
+			double[] overfitValues1, boolean comCaracteristica1, ArrayList<String> algoritmosEscolhidos1)
+			throws IllegalStateException, IOException, CsvException {
 
-				uniqueDates = getAllDates(aulas);
-				salas = escolherAlgoritmoOrdenacao(salas, algoritmo);
-				separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
+		System.out.println(comCaracteristica1);
+		ArrayList<int[]> printableResults = new ArrayList<int[]>();
+		overfitValues = overfitValues1;
+		comCaracteristica = comCaracteristica1;
+		algoritmosEscolhidos = algoritmosEscolhidos1;
 
-				Avaliacao avaliacao = new Avaliacao(aulas, salas,algoritmo);
+		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
+				.withType(Sala.class).build().parse();
+
+		for (String algoritmo : algoritmosEscolhidos) {
+			String resultado = path + algoritmo + ".csv";
+			System.out.println(algoritmo);
+			List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1)
+					.withSeparator(';').withType(Aula.class).build().parse();
+
+			adicionarCaracteristicas(salas, fileNameSala);
+
+			uniqueDates = getAllDates(aulas);
+			salas = escolherAlgoritmoOrdenacao(salas, algoritmo);
+			separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
+
+			Avaliacao avaliacao = new Avaliacao(aulas, salas, algoritmo);
 //				int[] resultadosAvaliacao = avaliacao.getAvaliacao();
 //				for (int i = 0; i != resultadosAvaliacao.length; i++) {
 //					System.out.println(resultadosAvaliacao[i]);
 //				}
-				printableResults.add(avaliacao.getAvaliacao());
+			printableResults.add(avaliacao.getAvaliacao());
 
 //				contarAulasComSalasAtribuidas(aulas);
 
-				printCSVFinal(fileNameAulas, aulas, resultado);
-			}
+			printCSVFinal(fileNameAulas, aulas, resultado);
+		}
 		return printableResults;
 
 	}
@@ -123,16 +121,14 @@ public class CsvImporter {
 		String[] turmasByComma;
 
 		for (Aula a : aulas) {
-			if (a.getSalaAtribuida().isBlank()) {
-				if (a.getTurma().contains(",")) {
-					turmasByComma = a.getTurma().split(", ");
+			if (a.getTurma().contains(",")) {
+				turmasByComma = a.getTurma().split(", ");
 
-					for (String turmas : turmasByComma)
-						uniqueTurmas.add(turmas);
+				for (String turmas : turmasByComma)
+					uniqueTurmas.add(turmas);
 
-				} else
-					uniqueTurmas.add(a.getTurma());
-			}
+			} else
+				uniqueTurmas.add(a.getTurma());
 		}
 
 		uniqueTurmas.remove("");
