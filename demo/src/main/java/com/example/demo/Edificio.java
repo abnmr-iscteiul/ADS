@@ -10,6 +10,9 @@ public enum Edificio {
 	}
 
 
+	/**
+	 * @return nome do edificio
+	 */
 	public String getNome() {
 		return nome;
 	}

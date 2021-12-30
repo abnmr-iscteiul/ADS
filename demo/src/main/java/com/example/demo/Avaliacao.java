@@ -3,6 +3,12 @@ package com.example.demo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author chainz
+ *
+ * Class que representa a avaliação de desempenho de um determinado algoritmo, 
+ * de acordo com um conjunto de metricas
+ */
 public class Avaliacao {
 	
 	private List<Aula> aulas;
@@ -36,6 +42,11 @@ public class Avaliacao {
 	}
 	
 
+	/**
+	 * Calcula a métrica que consiste no número de aulas às quais foi atribuida uma sala
+	 * 
+	 * @return númerod de aulas com sala atribuida
+	 */
 	private int calcularNumAulasComSalaAtribuida() {
 		int count = 0;
 		for (Aula aula : aulas) {
@@ -47,6 +58,11 @@ public class Avaliacao {
 	}
 	
 
+	/**
+	 * Calcula a métrica que consiste no número de vezes que é necessário trocar de edificio
+	 * 
+	 * @return número de trocas de edificio
+	 */
 	private int calcularNumTrocasEdificio() {
 		ArrayList<String> uniqueDates = CsvImporter.getAllDates(aulas);
 		ArrayList<String> uniqueTurmas = CsvImporter.getAllTurmas(aulas);
@@ -79,6 +95,11 @@ public class Avaliacao {
 	}
 
 
+	/**
+	 * Calcula a métrica que consiste no número de vezes que é necessário trocar de sala
+	 * 
+	 * @return numero de trocas de sala
+	 */
 	private int calcularNumTrocasSala() {
 		ArrayList<String> uniqueDates = CsvImporter.getAllDates(aulas);
 		ArrayList<String> uniqueTurmas = CsvImporter.getAllTurmas(aulas);
@@ -110,6 +131,12 @@ public class Avaliacao {
 	}
 	
 	
+	/**
+	 * Compara a sala da aula atual com a sala da aula a seguir. Caso seja diferente incrementa o contador
+	 * 
+	 * @param aulasDaTurma
+	 * @return contador
+	 */
 	private int compararSalas(List<Aula> aulasDaTurma) {
 		int count = 0;
 		for (int i = 0; i != aulasDaTurma.size() - 1; i++) {
@@ -121,6 +148,12 @@ public class Avaliacao {
 	}
 	
 
+	/**
+	 * Compara o edificio da aula atual com o edificio da aula a seguir. Caso seja diferente incrementa o contador
+	 * 
+	 * @param aulasDaTurma
+	 * @return contador
+	 */
 	private int compararEdificios(List<Aula> aulasDaTurma) {
 		int count = 0;
 		for (int i = 0; i != aulasDaTurma.size() - 1; i++) {
@@ -133,6 +166,11 @@ public class Avaliacao {
 	}
 	
 
+	/**
+	 * Calcula a métrica que consiste no número de salas atribuidas que tem a caracteristica pedida
+	 * 
+	 * @return numero de aulas cuja sala tem a caracteristica pedida 
+	 */
 	private int calcularNumSalasAtribComCaracPedida() {
 		int count = 0;
 		for (Aula aula : aulas) {
@@ -144,6 +182,11 @@ public class Avaliacao {
 	}
 	
 
+	/**
+	 * Devolve o resultado da avaliação de todas as metricas
+	 * 
+	 * @return array com o resultado de cada metrica
+	 */
 	public int[] getAvaliacao() {
 		int[] resultados = new int[NUM_METRICAS+1];
 		resultados[0] = numAulasComSalaAtribuida;

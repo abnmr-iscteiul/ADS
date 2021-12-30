@@ -1,5 +1,11 @@
 package com.example.demo;
 
+/**
+ * @author chainz
+ *
+ * Representa um slot de tempo, com duração de 30 minutos. Serve para indicar se a
+ * sala está ou não disponível num determinado periodo de tempo (Slot)
+ */
 public class Slot {
 
 	String timeSlot;
@@ -19,6 +25,9 @@ public class Slot {
 		this.timeSlot = timeSlot;
 	}
 
+	/**
+	 * @return true caso o slot esteja a ser utilizado, false caso contrário
+	 */
 	public boolean isUsedTimeSlot() {
 		return usedTimeSlot;
 	}
