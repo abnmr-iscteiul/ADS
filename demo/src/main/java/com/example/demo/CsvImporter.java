@@ -373,6 +373,8 @@ public class CsvImporter {
 			return baralharLista(salas);
 		case "LOWERCAPACITYFIRST":
 			return ordenarMenorCapacidadePrimeiro(salas);
+		case "LESSCARACTFIRST":
+			return ordenarMenosCaracteristicasPrimeiro(salas);
 		}
 		return salas;
 	}
@@ -422,6 +424,34 @@ public class CsvImporter {
 			Sala aux = salasAux.get(0);
 			for (Sala sala : salasAux) {
 				if (sala.getCapacidadeNormal() < aux.getCapacidadeNormal()) {
+					aux = sala;
+				}
+			}
+			salasOrdenadas.add(aux);
+			salasAux.remove(aux);
+		}
+		return salasOrdenadas;
+	}
+
+	/**
+	 * Ordena a lista de salas recebida, de forma a devolver uma nova lista com os
+	 * mesmos elementos mas ordenados tendo em conta o número de caracteristicas que
+	 * a sala tem. Estão ordenados de forma crescente relativamente ao numero de
+	 * caracteristicas da sala , sendo o primeiro elemento da lista a Sala com menor
+	 * numero de caracteristicas.
+	 * 
+	 * @param salas
+	 * @return
+	 */
+	private static List<Sala> ordenarMenosCaracteristicasPrimeiro(List<Sala> salas) {
+		List<Sala> salasAux = new ArrayList<Sala>(salas);
+		List<Sala> salasOrdenadas = new ArrayList<Sala>();
+
+		while (!salasAux.isEmpty()) {
+
+			Sala aux = salasAux.get(0);
+			for (Sala sala : salasAux) {
+				if (sala.getnCaracteristicas() < aux.getnCaracteristicas()) {
 					aux = sala;
 				}
 			}

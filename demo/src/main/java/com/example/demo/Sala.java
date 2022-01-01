@@ -24,7 +24,7 @@ public class Sala {
 	private int capacidadeExame;
 
 	@CsvBindByPosition(position = 4)
-	int nCaracteristicas;
+	private int nCaracteristicas;
 
 	ArrayList<String> caracteristicas = new ArrayList<String>();
 
@@ -161,6 +161,13 @@ public class Sala {
 	 */
 	public String getEdificio() {
 		return edificio;
+	}
+	
+	/**
+	 * @return número de caracteristicas que a sala tem
+	 */
+	public int getnCaracteristicas() {
+		return nCaracteristicas;
 	}
 
 }
