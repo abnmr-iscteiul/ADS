@@ -26,12 +26,20 @@ public class Slot {
 	}
 
 	/**
+	 * Indica se o time slot está ou não a ser utilizado
+	 * 
 	 * @return true caso o slot esteja a ser utilizado, false caso contrário
 	 */
 	public boolean isUsedTimeSlot() {
 		return usedTimeSlot;
 	}
 
+	
+	/**
+	 * Altera o estado de utilizção do time slot
+	 * 
+	 * @param usedTimeSlot - true, o time slot fica utilizado, false, o time slot deoxa de estar utilizado
+	 */
 	public void setUsedTimeSlot(boolean usedTimeSlot) {
 		this.usedTimeSlot = usedTimeSlot;
 	}
