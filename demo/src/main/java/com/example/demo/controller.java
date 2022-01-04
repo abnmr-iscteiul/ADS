@@ -100,12 +100,26 @@ public class controller {
 		model.addAttribute("resultado",resultado);
 		model.addAttribute("nome","Menor Capacidade Primeiro");		
 		return "res";
-	}	
+	}
+	@GetMapping("/LESSCARACTFIRST")
+	public String lesscaractfirst(Model model) {		
+		String csvOutputFile;
+		try {
+				csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+"LESSCARACTFIRST"+".csv"));
+				model.addAttribute("CSV",csvOutputFile);	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		model.addAttribute("resultado",resultado);
+		model.addAttribute("nome","Menor Nº de Características Primeiro");		
+		return "res";
+	}
 	@PostMapping("/post")
 	public String post(Model model,@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2,
 			@RequestParam(required=false,value="FIFO") String FIFO,
 			@RequestParam(required=false,value="LIFO") String LIFO, @RequestParam(required=false,value="random") String random,
 			@RequestParam(required=false,value="LCF") String LCF,
+			@RequestParam(required=false,value="LESSCARACTFIRST") String LESSCARACTFIRST,
 			@RequestParam(required=false,value="segunda") String segunda,
 			@RequestParam(required=false,value="terca") String terca, @RequestParam(required=false,value="quarta") String quarta,
 			@RequestParam(required=false,value="quinta") String quinta, @RequestParam(required=false,value="sexta") String sexta, 
@@ -159,6 +173,8 @@ public class controller {
 			algoritmosEscolhidos.add("RANDOM");
 		if(LCF!=null)
 			algoritmosEscolhidos.add("LOWERCAPACITYFIRST");
+		if(LESSCARACTFIRST!=null)
+			algoritmosEscolhidos.add("LESSCARACTFIRST");
 		
 		try (OutputStream os = Files.newOutputStream(filepath)) {
 			os.write(file.getBytes());
