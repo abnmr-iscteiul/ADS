@@ -38,7 +38,8 @@ public class Avaliacao {
 			this.algoritmo=2;
 		if(algoritmo=="LOWERCAPACITYFIRST")
 			this.algoritmo=3;
-		
+		if(algoritmo=="LESSCARACTFIRST")
+			this.algoritmo=4;
 	}
 	
 
