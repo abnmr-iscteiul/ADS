@@ -126,8 +126,7 @@ public class controller {
 			@RequestParam(required=false,value="sabado") String sabado
 			, @RequestParam(required=false,value="flexRadioCaract") String caracter) {
 		boolean caract;
-		
-		System.out.println(caracter);
+		resultado= new ArrayList<int[]>();
 		
 		if(caracter.equals("true"))
 			caract=true;
@@ -176,6 +175,7 @@ public class controller {
 		if(LESSCARACTFIRST!=null)
 			algoritmosEscolhidos.add("LESSCARACTFIRST");
 		
+		
 		try (OutputStream os = Files.newOutputStream(filepath)) {
 			os.write(file.getBytes());
 		} catch (IOException e) {
@@ -196,11 +196,6 @@ public class controller {
 	    } catch (IllegalStateException | IOException | CsvException e) {
 			e.printStackTrace();
 		}
-	    System.out.println(segunda + terca);
-	    for(int i=0;i<algoritmosEscolhidos.size();i++) {
-	    	
-	    }
-	    	
 	    String csvOutputFile;
 		try {
 			csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+algoritmosEscolhidos.get(0)+".csv"));
