@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css" media="screen" />
+	<link href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.10.1/main.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.10.1/main.min.js"></script>
+	<script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+	<script src="https://cdn.plot.ly/plotly-2.6.3.min.js"></script>
+	<!-- <script th:src="@{script.js}" th:inline="javascript"></script> -->
+	<script  th:inline="javascript">
+		window.onload = function exampleFunction() {
+			document.getElementById("uploadBtnSala").onchange = function () {
+				document.getElementById("uploadFileSala").value = this.value;
+			};
+			document.getElementById("uploadBtnHorario").onchange = function () {
+				document.getElementById("uploadFileHorario").value = this.value;
+			};
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+
+			var calendarEl = document.getElementById('calendar');
+
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+				initialView: 'timeGridWeek',
+				slotMinTime: '08:00:00',
+				initialDate: '2015-10-01',
+				businessHours: false,
+				events: dictTimetable['MEI']
+			});
+
+			calendar.render();
+			showTable()
+			dropdownCreator()
+			plotData()
+			handleTable()
+		});
+		
+		var csv = /*[[${csv}]]*/ 'default';
+		var resultado = /*[[${resultado}]]*/ 'default';
+		console.log(resultado);
+		
+		var rows = csv.split('\n').slice(0, -1);
+		var splitedRows = []
+		var dictTimetable = {}
+		var arrayResults = []
+
+		rows.forEach(row => {
+			splited = row.split(';')
+			splitedRows.push(splited)
+			if (!dictTimetable[splited[0]]) {
+				dictTimetable[splited[0]] = [];
+			}
+			dictTimetable[splited[0]].push(
+				{
+					title: splited[12] + '-' + splited[1],
+					start: formatDate(splited[10]) + 'T' + splited[8],
+					end: formatDate(splited[10]) + 'T' + splited[9],
+				}
+			)
+
+			arrayResults.push(
+				{
+				 course:splited[0], unit:splited[1], shift:splited[2], class:splited[3], enrolled:splited[4],
+				 higherCapacity:splited[5], higherEnrolled:splited[6], weekday:splited[7], start:splited[8],
+				 end:splited[9], date:splited[10], characteristics:splited[11], classroom:splited[12],
+				 capacity:splited[13], realCharacteristics:splited[14]
+				}
+			)
+		})
+
+		function showTable(){
+			var table = new Tabulator("#tabulator", {
+				layout:"fitDataTable",
+				pagination:true,
+				paginationSize:50,
+				paginationSizeSelector:true,
+				columns:[
+        			{title:"Curso", field:"course"},
+					{title:"Unidade de Execução", field:"unit"},
+					{title:"Turno", field:"shift"},
+					{title:"Turma", field:"class"},
+					{title:"Inscritos no turno (no 1º semestre é baseado em estimativas)", field:"enrolled"},
+					{title:"Turnos com capacidade superior à capacidade das características das salas", field:"higherCapacity"},
+					{title:"Turno com inscrições superiores à capacidade das salas", field:"higherEnrolled"},
+					{title:"Dia da Semana", field:"weekday"},
+					{title:"Início", field:"start"},
+					{title:"Fim", field:"end"},
+					{title:"Dia", field:"date"},
+					{title:"Características da sala pedida para a aula", field:"characteristics"},
+					{title:"Sala da aula", field:"classroom"},
+					{title:"Lotação", field:"capacity"},
+					{title:"Características reais da sala", field:"realCharacteristics"},
+				],
+				data: arrayResults //assign data to table
+			});
+		}
+		
+		function dropdownCreator(){
+			var chuncks = $(".fc-toolbar-chunk").map(function() {
+				return this;
+			}).get();
+
+			var list = "<button class='btn btn-primary bg-primary dropdown-toggle w-75' id='dropdown-button' type='button' id='dropdownMenuButton1' data-bs-toggle='dropdown' aria-expanded='false'>\
+						  Curso\
+						</button>\
+					<ul class='dropdown-menu row' aria-labelledby='dropdownMenuButton1'>"
+			Object.keys(dictTimetable).forEach(key => {
+				list += "<li class='dropdown-item' onclick='showCalendar(this)'>" + key + "</li>"
+			})
+			list += "</ul>"
+
+			chuncks[1].innerHTML = list
+		}
+		
+		function showCalendar(li){
+			let key = li.innerHTML
+			$('#course-dropdown').html("<h2>Curso: " + key + "</h2>")
+			var calendarEl = document.getElementById('calendar');
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+				initialView: 'timeGridWeek',
+				slotMinTime: '08:00:00',
+				initialDate: '2015-10-01',
+				businessHours: false,
+				events: dictTimetable[key]
+			});
+			calendar.render();
+		}
+
+		function handleTable(){
+			$("#calendar").hide();
+			$("#course-row").hide();
+			$("#tabulator").show();
+			$("#radialGraph").hide();
+		}
+
+		function handleCalendar(){
+			$("#calendar").show();
+			$("#course-row").show();
+			$("#tabulator").hide();
+			$("#radialGraph").hide();
+		}
+
+		function handleGraph(){
+			$("#calendar").hide();
+			$("#course-row").hide();
+			$("#tabulator").hide();
+			$("#radialGraph").show();
+		}
+
+
+		function formatDate(date){
+			let splited = date.split('/')
+			return splited[2] + '-' + splited[1] + '-' + splited[0] 
+		}
+
+		function plotData(){
+			data = []
+			i = 0
+
+			resultado.forEach( result => {
+				data.push(
+					{
+						type: 'scatterpolar',
+						r: result,
+						theta: ['A','B','C', 'D', 'E'],
+						fill: 'toself',
+						name: 'Group' + i
+					}
+				)
+				i += 1
+			})
+
+			layout = {
+				polar: {
+					radialaxis: {
+					visible: false,
+					range: [0, 25000]
+					}
+				}
+			}
+
+			Plotly.newPlot("radialGraph", data, layout)
+		}
+	</script>
+
+
+	
+	<title>Projeto 3</title>
+</head>
+<body>
+    <nav class="bg-primary p-1">
+        <h1 class="text-white text-center"> Distribuidor de Salas</h1>
+    </nav>
+
+    
+    <div class="container h-75">
+		<form method="post" th:action="@{/post}" enctype="multipart/form-data">
+			<div class="row justify-content-center mt-4" accept-charset="utf-8">
+				<div class="p-4 col text-center">
+					<div class="row">
+						<label class="text-iscte" for="salas">Lista de salas:</label>
+					</div>
+					<div class="row mt-3">
+						<input class="col-7 mb-2" id="uploadFileSala" placeholder="Choose File" disabled="disabled"/>
+						<div class="fileUpload btn btn-primary bg-primary col-4">
+							<span>Upload</span>
+							<input id="uploadBtnSala" type="file" class="upload" name="salas"/>
+						</div>
+					</div>
+				</div>
+				<div class="p-4 col text-center">
+					<div class="row">
+						<label class="text-iscte" for="horarios">Horários a preencher:</label>
+					</div>
+					<div class="row mt-3">
+						<input class="col-7 mb-2" id="uploadFileHorario" placeholder="Choose File" disabled="disabled"/>
+						<div class="fileUpload btn btn-primary bg-primary col-4">
+							<span>Upload</span>
+							<input id="uploadBtnHorario" type="file" class="upload" name="horarios"/>
+						</div>
+					</div>
+				</div>
+				<div class="mt-4 pt-3 col text-center">
+						<button type="submit" class="btn btn-primary bg-primary mt-4 w-50">Distribuir</button>
+				</div>
+			</div>
+		</form>
+		<div class="row">
+			<div class="col-1 p-0">
+				<button class="btn btn-dark btn-tab w-100" onclick="handleTable()">Resultado</button>
+			</div>
+			<div class="col-1 p-0">
+				<button class="btn btn-dark btn-tab w-100" onclick="handleCalendar()">Horários</button>
+			</div>
+			<div class="col-1 p-0">
+				<button class="btn btn-dark btn-tab w-100" onclick="handleGraph()">Métricas</button>
+			</div>
+		</div>
+		<div class="row mh-75 h-75 overflow-auto border border-dark">
+			<div class="bg-light col justify-content-center">	 
+				<div class="row justify-content-center" id="course-row">
+					<div class="dropdown d-grid gap-2 col p-3 text-center" id="course-dropdown" >
+						
+					</div>
+				</div> 
+				<div id='calendar'></div>
+				<div id="tabulator"></div>
+				<div class="w-100 h-50" id="radialGraph"></div>
+			</div>
+		</div>
+    </div>
+</body>
+</html>
