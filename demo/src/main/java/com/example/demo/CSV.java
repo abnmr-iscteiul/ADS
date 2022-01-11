@@ -7,42 +7,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public final class CSV {
+public class CSV {
     private final List<String[]> cells;
-    public int rows=0;
-    public int cols;
+    private int rows=0;
+    private int cols;
     public CSV(File file, int size) throws IOException {
     	cols=size;
         cells = new ArrayList<>();
         try (Scanner scan = new Scanner(file)) {
         	while (scan.hasNextLine()) {
             	String line = scan.nextLine();
-            	String [] s = new String[size];
-            	for(int i =0; i<line.split(";").length-1;i++)
+            	String [] s = new String[cols];
+            	for(int i =0; i<line.split(";").length;i++) {
             		s[i]=line.split(";")[i];
+            	}
                 cells.add(s);
                 rows++;
             }
         }
     }
+    
 
     public String get(int row, int col) {
         String[] columns = cells.get(row);
         return columns[col];
     }
 
-    public CSV set(int row, int col, String value) {
-    	if(row>=rows) {
+    public void set(int row, int col, String value) {
+    	if(row>=cells.size()) {
     		 String[] columns = new String [cols];
     		 for(int i=0;i<cols;i++)
     			 columns[i]="";
-    	     columns[col] = value;
+    		 columns[col] = value;
     	     cells.add(columns);
-    	     return this;
+    	     return;
     	}
-        String[] columns = cells.get(row);
-        columns[col] = value;
-        return this;
+        cells.get(row)[col]=value;
+        return;
     }
 
     public void save(File file) throws IOException {
@@ -52,7 +53,7 @@ public final class CSV {
     				cells.get(i)[j] = "";
     			}
     	
-    	
+
         try (PrintWriter out = new PrintWriter(file)) {
             for (String[] row : cells) {
                 for (String cell : row) {
@@ -65,4 +66,26 @@ public final class CSV {
             }
         }
     }
+
+	public int getRows() {
+		return rows;
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	public int getCols() {
+		return cols;
+	}
+
+	public void setCols(int cols) {
+		this.cols = cols;
+	}
+
+
+	public List<String[]> getCells() {
+		return cells;
+	}
+    
 }

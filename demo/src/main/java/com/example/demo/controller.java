@@ -1,10 +1,13 @@
 package com.example.demo;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -283,25 +286,23 @@ public class controller {
 	public String post2(Model model,@RequestParam("1") String string,@RequestParam("2") String string2,@RequestParam("3") String string3,@RequestParam("4") String string4
 			,@RequestParam("5") String string5,@RequestParam("6") String string6,@RequestParam("7") String string7,@RequestParam("8") String string8,
 			@RequestParam("9") String string9
-			,@RequestParam("10") String string10,@RequestParam("11") String string11,@RequestParam("12") String string12,@RequestParam("13") String string13) {
-
+			,@RequestParam("10") String string10) {
 		try {
 			CSV copy= new CSV(new File(params.get(0)),items.size());
 			CSV base = new CSV (new File("src/main/resources/base.csv"),defaultColumns.size());
-			for(int i=0; i<copy.rows;i++) {
+			for(int i=0; i<copy.getRows();i++) {
 				base.set(i, 0, copy.get(i, items.indexOf(string)));
 				base.set(i, 1, copy.get(i, items.indexOf(string2)));
 				base.set(i, 2, copy.get(i, items.indexOf(string3)));
 				base.set(i, 3, copy.get(i, items.indexOf(string4)));
 				base.set(i, 4, copy.get(i, items.indexOf(string5)));
+				base.set(i, 5, "false");
+				base.set(i, 6, "false");
 				base.set(i, 7, copy.get(i, items.indexOf(string6)));
 				base.set(i, 8, copy.get(i, items.indexOf(string7)));
 				base.set(i, 9, copy.get(i, items.indexOf(string8)));
 				base.set(i, 10, copy.get(i, items.indexOf(string9)));
 				base.set(i, 11, copy.get(i, items.indexOf(string10)));
-				base.set(i, 12, copy.get(i, items.indexOf(string11)));
-				base.set(i, 13, copy.get(i, items.indexOf(string12)));
-				base.set(i, 14, copy.get(i, items.indexOf(string13)));
 			}
 			base.save(new File("src/main/resources/base.csv"));
 		} catch (IOException e) {
@@ -375,6 +376,17 @@ public class controller {
 			model.addAttribute("CSV", csvOutputFile);
 			model.addAttribute("nome", algoritmosEscolhidos.get(0));
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		PrintWriter out;
+		try {
+			out = new PrintWriter("src/main/resources/base.csv");
+			out.println("Curso;Unidade de execução;Turno;Turma;Inscritos no turno (no 1º semestre é baseado em estimativas);Turnoss com capacidade superior à capacidade das características das salas;Turno com inscrições superiores à capacidade das salas;Dia da Semana;Início;Fim;Dia;"
+					+ "Características da sala pedida para a aula;Sala da aula;Lotação;Características reais da sala".getBytes("UTF-8"));
+			out.flush();
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "res";
