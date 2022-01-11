@@ -1,4 +1,5 @@
 package com.example.demo;
+
 import com.opencsv.bean.CsvBindByPosition;
 
 public class Aula {
@@ -61,12 +62,12 @@ public class Aula {
 	public String getDiaSemana() {
 		return diaDaSemana;
 	}
-	
+
 	/**
 	 * @return um inteiro correspondente ao dia da semana da aula
 	 */
 	public int getDiaSemanaInt() {
-		switch(diaDaSemana) {
+		switch (diaDaSemana) {
 		case "Seg":
 			return 0;
 		case "Ter":
@@ -89,9 +90,10 @@ public class Aula {
 	public String getInicio() {
 		return inicio;
 	}
-	
+
 	/**
-	 * @return double de acordo com a hora de inicio da aula, para fazer ordenação por hora de inicio
+	 * @return double de acordo com a hora de inicio da aula, para fazer ordenação
+	 *         por hora de inicio
 	 */
 	public Double getInicioDouble() {
 		String[] horaArray = inicio.split(":");
@@ -114,7 +116,7 @@ public class Aula {
 	}
 
 	/**
-	 * Define a sala atribuida da aula como a sala que lhe foi atribuida 
+	 * Define a sala atribuida da aula como a sala que lhe foi atribuida
 	 * 
 	 * @param sala - sala a atribuir
 	 */
@@ -144,7 +146,8 @@ public class Aula {
 	}
 
 	/**
-	 * Serve para atualizar as caracteristas da sala atribuida na aula correspondente
+	 * Serve para atualizar as caracteristas da sala atribuida na aula
+	 * correspondente
 	 * 
 	 * @param caracteristicasReaisDaSala
 	 */
@@ -165,7 +168,7 @@ public class Aula {
 	public String getDia() {
 		return dia;
 	}
-	
+
 	/**
 	 * @return nome da turma da aula em questão
 	 */
@@ -182,11 +185,17 @@ public class Aula {
 			salaAtribuida = "";
 
 		String[] toCSV = { curso, unidadeCurricular, turno, turma, Integer.toString(numeroInscritos),
-				turnosComCapacidadeSuperior, turnosComInscricoesSuperiores,
-				diaDaSemana, inicio, fim, dia, caracteristicaPedida, salaAtribuida, Integer.toString(lotacao),
-				caracteristicasReaisDaSala };
+				turnosComCapacidadeSuperior, turnosComInscricoesSuperiores, diaDaSemana, inicio, fim, dia,
+				caracteristicaPedida, salaAtribuida, Integer.toString(lotacao), caracteristicasReaisDaSala };
 
 		return toCSV;
+	}
+
+	/**
+	 * @return turno da aula
+	 */
+	public String getTurno() {
+		return turno;
 	}
 
 	@Override
@@ -197,5 +206,9 @@ public class Aula {
 				+ ", diaDaSemana=" + diaDaSemana + ", inicio=" + inicio + ", fim=" + fim + ", dia=" + dia
 				+ ", caracteristicaspedida=" + caracteristicaPedida + ", salaAtribuida=" + salaAtribuida + ", lotacao="
 				+ lotacao + ", caracteristicasReaisDaSala=" + caracteristicasReaisDaSala + "]";
+	}
+
+	public String getUnidadeCurricular() {
+		return unidadeCurricular;
 	}
 }

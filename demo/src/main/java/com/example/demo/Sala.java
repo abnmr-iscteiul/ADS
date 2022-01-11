@@ -1,4 +1,5 @@
 package com.example.demo;
+
 import java.util.ArrayList;
 
 import com.opencsv.bean.CsvBindByPosition;
@@ -6,8 +7,10 @@ import com.opencsv.bean.CsvBindByPosition;
 /**
  * @author chainz
  *
- * Representa um objeto do tipo Sala. Este é criado recorrendo ao opencsv, que extrai informação
- * de um ficheiro csv e carrega nos atributos da class, de acordo com a posição em que se encontram no ficheiro.
+ *         Representa um objeto do tipo Sala. Este é criado recorrendo ao
+ *         opencsv, que extrai informação de um ficheiro csv e carrega nos
+ *         atributos da class, de acordo com a posição em que se encontram no
+ *         ficheiro.
  */
 public class Sala {
 
@@ -41,34 +44,32 @@ public class Sala {
 				+ ", capacidadeExame=" + capacidadeExame + ", nCaracteristicas=" + nCaracteristicas
 				+ ", caracteristicas=" + caracteristicas + "           " + slots.size() + "]";
 	}
-	
-	
+
 	/**
 	 * @return caracteristicas da sala, num formato de ArrayList de Strings
 	 */
 	public ArrayList<String> getCaracteristicas() {
 		return caracteristicas;
 	}
-	
 
 	/**
-	 * @return caracteristicas da sala, num formato de String 
+	 * @return caracteristicas da sala, num formato de String
 	 */
 	public String getCaracteristicasInString() {
 		String caracteristicasStr = "";
 		if (!caracteristicas.isEmpty()) {
-			for (int i =0; i<caracteristicas.size(); i++){
-				if (i == caracteristicas.size()-1) {
+			for (int i = 0; i < caracteristicas.size(); i++) {
+				if (i == caracteristicas.size() - 1) {
 					caracteristicasStr += caracteristicas.get(i);
 				} else {
 					caracteristicasStr += caracteristicas.get(i) + ",";
 				}
 			}
-			
+
 		} else {
 			caracteristicasStr = "";
 		}
-		
+
 		return caracteristicasStr;
 	}
 
@@ -115,6 +116,16 @@ public class Sala {
 
 	}
 
+	public int getNextSlotIndex(String time) {
+		for (int i = 0; i < slots.size(); i++) {
+			if (time.equals(slots.get(i).getTimeSlot())) {
+				return i + 1;
+			}
+		}
+		return -1;
+
+	}
+
 	/**
 	 * Indica se o time slot em questão está preenchido (a ser utilizado) ou não
 	 * 
@@ -142,7 +153,8 @@ public class Sala {
 	}
 
 	/**
-	 * Indica se o slot correspondente a uma determinada hora se encontra disponivel ou não
+	 * Indica se o slot correspondente a uma determinada hora se encontra disponivel
+	 * ou não
 	 * 
 	 * @param time
 	 * @return true se o slot estiver disponivel, falso caso contrario
@@ -162,7 +174,7 @@ public class Sala {
 	public String getEdificio() {
 		return edificio;
 	}
-	
+
 	/**
 	 * @return número de caracteristicas que a sala tem
 	 */
