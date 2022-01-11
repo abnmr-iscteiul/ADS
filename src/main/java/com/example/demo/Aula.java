@@ -1,4 +1,5 @@
 package com.example.demo;
+
 import com.opencsv.bean.CsvBindByPosition;
 
 public class Aula {
@@ -48,16 +49,25 @@ public class Aula {
 	@CsvBindByPosition(position = 14)
 	private String caracteristicasReaisDaSala;
 
+	/**
+	 * @return característica que a aula precisa que a sala tenha
+	 */
 	public String getCaracteristicaPedida() {
 		return caracteristicaPedida;
 	}
 
+	/**
+	 * @return dia da semana da aula
+	 */
 	public String getDiaSemana() {
 		return diaDaSemana;
 	}
-	
+
+	/**
+	 * @return um inteiro correspondente ao dia da semana da aula
+	 */
 	public int getDiaSemanaInt() {
-		switch(diaDaSemana) {
+		switch (diaDaSemana) {
 		case "Seg":
 			return 0;
 		case "Ter":
@@ -74,71 +84,118 @@ public class Aula {
 		return 10;
 	}
 
+	/**
+	 * @return hora de inicio da aula
+	 */
 	public String getInicio() {
 		return inicio;
 	}
-	
+
+	/**
+	 * @return double de acordo com a hora de inicio da aula, para fazer ordenação
+	 *         por hora de inicio
+	 */
 	public Double getInicioDouble() {
 		String[] horaArray = inicio.split(":");
 		double horaInicio = Double.parseDouble(horaArray[0]) + (Double.parseDouble(horaArray[1]) * 0.01);
 		return horaInicio;
 	}
 
+	/**
+	 * @return numero de inscritos na aula
+	 */
 	public int getNumeroInscritos() {
 		return numeroInscritos;
 	}
 
+	/**
+	 * @return sala atribuida à sala
+	 */
 	public String getSalaAtribuida() {
 		return salaAtribuida;
 	}
 
+	/**
+	 * Define a sala atribuida da aula como a sala que lhe foi atribuida
+	 * 
+	 * @param sala - sala a atribuir
+	 */
 	public void setSalaAtribuida(String sala) {
 		salaAtribuida = sala;
 	}
 
+	/**
+	 * @return lotação da sala atribuida
+	 */
 	public int getLotacao() {
 		return lotacao;
 	}
 
+	/**
+	 * @param lotacao - lotação da sala atribuida
+	 */
 	public void setLotacao(int lotacao) {
 		this.lotacao = lotacao;
 	}
 
+	/**
+	 * @return caracteristicas da sala atribuida
+	 */
 	public String getCaracteristicasReaisDaSala() {
 		return caracteristicasReaisDaSala;
 	}
 
+	/**
+	 * Serve para atualizar as caracteristas da sala atribuida na aula
+	 * correspondente
+	 * 
+	 * @param caracteristicasReaisDaSala
+	 */
 	public void setCaracteristicasReaisDaSala(String caracteristicasReaisDaSala) {
 		this.caracteristicasReaisDaSala = caracteristicasReaisDaSala;
 	}
 
+	/**
+	 * @return hora de fim da aula
+	 */
 	public String getFim() {
 		return fim;
 	}
 
-	public void setFim(String fim) {
-		this.fim = fim;
-	}
-
+	/**
+	 * @return dia da aula
+	 */
 	public String getDia() {
 		return dia;
 	}
-	
+
+	/**
+	 * @return nome da turma da aula em questão
+	 */
 	public String getTurma() {
 		return turma;
 	}
 
+	/**
+	 * @return Array de strings a imprimir no csv, após ter sido feita a atribuição
+	 */
 	public String[] printToCSV() {
 
 		if (salaAtribuida == null)
 			salaAtribuida = "";
 
 		String[] toCSV = { curso, unidadeCurricular, turno, turma, Integer.toString(numeroInscritos),
-				turnosComCapacidadeSuperior, turnosComInscricoesSuperiores,
-				diaDaSemana, inicio, fim, dia, caracteristicaPedida, salaAtribuida, Integer.toString(lotacao),
-				caracteristicasReaisDaSala };
+				turnosComCapacidadeSuperior, turnosComInscricoesSuperiores, diaDaSemana, inicio, fim, dia,
+				caracteristicaPedida, salaAtribuida, Integer.toString(lotacao), caracteristicasReaisDaSala };
 
 		return toCSV;
+	}
+
+	/**
+	 * @return turno da aula
+	 */
+	public String getTurno() {
+		return turno;
 	}
 
 	@Override
@@ -149,5 +206,9 @@ public class Aula {
 				+ ", diaDaSemana=" + diaDaSemana + ", inicio=" + inicio + ", fim=" + fim + ", dia=" + dia
 				+ ", caracteristicaspedida=" + caracteristicaPedida + ", salaAtribuida=" + salaAtribuida + ", lotacao="
 				+ lotacao + ", caracteristicasReaisDaSala=" + caracteristicasReaisDaSala + "]";
+	}
+
+	public String getUnidadeCurricular() {
+		return unidadeCurricular;
 	}
 }

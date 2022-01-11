@@ -7,12 +7,14 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,32 +27,39 @@ public class CsvImporter {
 
 	private static double[] overfitValues;
 	private static boolean comCaracteristica;
+	private static boolean manterSalas;
 	private static ArrayList<String> algoritmosEscolhidos;
-
-	// ALGORITMOS - sexta e sabado com mais alunos que lugares da sala, nao ter em
-	// conta as caracteristicas, ter em conta as caracteristicas
-	// --> mudar para apenas 1 metodo que é custom o overfit e que pode ter em conta
-	// as caracteristicas da sala ou nao
-
-	// LIFO, FIFO, Random (DONE)
-	// algoritmo que tenta atribuir primeiro as salas com menor capacidade
-
-	// METRICAS DE AVALIAÇAO - numero de aulas com sala atribuida,
-	// trocas de edificio,
-	// mudanças de sala,
-	// salas disponiveis,
-	// numero de salas atribuidas com a caracteristica pedida
+/**
+	 * Recebe os objetos provenientes da interação entre o utilizador e a GUI. Atua
+	 * como main da aplicação, executando os passos necessários para fazer a
+	 * atribuição de salas de acordo com os parâmetros escolhidos pelo utilizador.
+	 * 
+	 * 
+	 * @param fileNameAulas         - path do ficheiro CSV que contém as aulas às
+	 *                              quais iram ser atribuidas salas
+	 * @param fileNameSala          - path do ficheiro CSV que contém as salas a
+	 *                              serem atribuidas
+	 * @param path                  - path onde irá ser guardado o ficheiro final
+	 * @param overfitValues1        - array de overfits, sendo que cada valor
+	 *                              corresponde a um dia da semana (segunda a
+	 *                              sabado)
+	 * @param comCaracteristica1    - indica se, no momento de atribuir as salas, se
+	 *                              deve ter em conta as caracteristicas que a sala
+	 *                              necessida de ter para uma determinada aula ou
+	 *                              não
+	 * @param algoritmosEscolhidos1 - indica o algoritmo de ordenação escolhido
+	 * @return metricas de avaliação das atribuições efetuadas
+	 */
 
 	public static ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path,
-			double[] overfitValues1, boolean comCaracteristica1, ArrayList<String> algoritmosEscolhidos1)
-			throws IllegalStateException, IOException, CsvException {
+			double[] overfitValues1, boolean comCaracteristica1, boolean manterSala1,
+			ArrayList<String> algoritmosEscolhidos1) throws IllegalStateException, IOException, CsvException {
 
-		System.out.println(comCaracteristica1);
 		ArrayList<int[]> printableResults = new ArrayList<int[]>();
 		overfitValues = overfitValues1;
 		comCaracteristica = comCaracteristica1;
 		algoritmosEscolhidos = algoritmosEscolhidos1;
-
+		manterSalas = manterSala1;
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
@@ -67,20 +76,23 @@ public class CsvImporter {
 			separarPorDiaEAtribuirSalas(aulas, salas, uniqueDates);
 
 			Avaliacao avaliacao = new Avaliacao(aulas, salas, algoritmo);
-//				int[] resultadosAvaliacao = avaliacao.getAvaliacao();
-//				for (int i = 0; i != resultadosAvaliacao.length; i++) {
-//					System.out.println(resultadosAvaliacao[i]);
-//				}
-			printableResults.add(avaliacao.getAvaliacao());
 
-//				contarAulasComSalasAtribuidas(aulas);
+			printableResults.add(avaliacao.getAvaliacao());
 
 			printCSVFinal(fileNameAulas, aulas, resultado);
 		}
 		return printableResults;
-
 	}
 
+	/**
+	 * Escreve num novo ficheiro CSV a informação original das aulas e a respetiva
+	 * atribuição de salas.
+	 * 
+	 * @param original - ficheiro inicial, que contém a informação das aulas ainda
+	 *                 por preencher
+	 * @param aulas    - lista de aulas, criada a partir do CSV inicial
+	 * @param path     - path onde é guardado o ficheiro CSV a ser criado
+	 */
 	private static void printCSVFinal(String original, List<Aula> aulas, String path) throws IOException, CsvException {
 		File csvOutputFile = new File(path);
 		String[] csvHeader;
@@ -103,6 +115,13 @@ public class CsvImporter {
 		}
 	}
 
+	/**
+	 * Devolve uma lista que contém as datas em que existe pelo menos uma aula, sem
+	 * repetições
+	 * 
+	 * @param aulas - lista de aulas, criada a partir do CSV inicial
+	 * @return lista de datas, sem repetições
+	 */
 	public static ArrayList<String> getAllDates(List<Aula> aulas) {
 		Set<String> uniqueDates = new HashSet<String>();
 
@@ -113,9 +132,19 @@ public class CsvImporter {
 		uniqueDates.remove("");
 		ArrayList<String> uniqueDatesArray = new ArrayList<>(uniqueDates);
 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		Collections.sort(uniqueDatesArray,
+				(s1, s2) -> LocalDate.parse(s1, formatter).compareTo(LocalDate.parse(s2, formatter)));
+
 		return uniqueDatesArray;
 	}
 
+	/**
+	 * Devolve uma lista que contém o nome das turmas, sem repetições
+	 * 
+	 * @param aulas - lista de aulas, criada a partir do CSV inicial
+	 * @return lista de turmas, sem repetições
+	 */
 	public static ArrayList<String> getAllTurmas(List<Aula> aulas) {
 		Set<String> uniqueTurmas = new HashSet<String>();
 		String[] turmasByComma;
@@ -137,6 +166,13 @@ public class CsvImporter {
 		return uniqueTurmasArray;
 	}
 
+	/**
+	 * Dado o nome de uma sala, devolve o nome do edificio correspondente
+	 * 
+	 * @param salas    - lista de salas
+	 * @param nomeSala - nome da sala
+	 * @return nome do edificio onde se encontra a sala
+	 */
 	public static String getEdificio(List<Sala> salas, String nomeSala) {
 		String edificio = "";
 		for (Sala sala : salas) {
@@ -148,6 +184,13 @@ public class CsvImporter {
 		return edificio;
 	}
 
+	/**
+	 * Ordena de forma crescente a lista recebida, pondo em primeiro lugar as aulas
+	 * que começam mais cedo
+	 * 
+	 * @param aulas - lista de aulas
+	 * @return lista de aulas, ordenada pela hora de inicio de cada aula
+	 */
 	public static List<Aula> ordenarPorHora(List<Aula> aulas) {
 		List<Aula> aulasOrdenadas = new ArrayList<Aula>();
 
@@ -166,6 +209,13 @@ public class CsvImporter {
 		return aulasOrdenadas;
 	}
 
+	/**
+	 * Adiciona as caracteristicas de cada sala, de acordo com a informação presente
+	 * no CSV
+	 * 
+	 * @param salas    - lista de salas
+	 * @param fileName - ficheiro que contem a informação das salas
+	 */
 	private static void adicionarCaracteristicas(List<Sala> salas, String fileName)
 			throws FileNotFoundException, IOException, CsvException {
 		CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
@@ -183,36 +233,75 @@ public class CsvImporter {
 				}
 			}
 		}
-		System.out.println("CSV File Size   " + csvReader.size());
+		// System.out.println("CSV File Size " + csvReader.size());
 	}
 
+	public static String getProximaDiaProximaSemana(String date, ArrayList<String> uniqueDates) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		int indexOfDate = uniqueDates.indexOf(date);
+		String dayNextWeek = "";
+
+		if (indexOfDate < uniqueDates.size() - 7) {
+			LocalDate d1 = LocalDate.parse(uniqueDates.get(indexOfDate), formatter);
+
+			for (int j = 0; j < 8; j++) {
+				LocalDate d2 = LocalDate.parse(uniqueDates.get(indexOfDate + j), formatter);
+				long diffDays = Duration.between(d1.atStartOfDay(), d2.atStartOfDay()).toDays();
+				if (diffDays == 7) {
+					dayNextWeek = uniqueDates.get(indexOfDate + j);
+
+					break;
+				}
+
+			}
+
+		}
+
+		return dayNextWeek;
+	}
+
+	/**
+	 * Faz a atribuição das aulas, dia a dia
+	 * 
+	 * @param aulas       - lista de aulas
+	 * @param salas       - lista de salas
+	 * @param uniqueDates - datas com aulas
+	 */
 	public static void separarPorDiaEAtribuirSalas(List<Aula> aulas, List<Sala> salas, ArrayList<String> uniqueDates) {
 
 		for (String s : uniqueDates) {
 			List<Aula> aulasDesseDia = new ArrayList<>();
+			List<Aula> aulasDaProximaSemana = new ArrayList<>();
+
+			String proximaSemana = getProximaDiaProximaSemana(s, uniqueDates);
 
 			for (int i = 0; i < aulas.size(); i++) {
 				if (aulas.get(i).getDia().equals(s))
 					aulasDesseDia.add(aulas.get(i));
 
 			}
-			preencherAulasComSalaAtribuida(aulasDesseDia, salas);
-			atribuirSalas(aulasDesseDia, salas);
-		}
-	}
+			if (!proximaSemana.equals("")) {
+				for (int i = 0; i < aulas.size(); i++) {
+					if (aulas.get(i).getDia().equals(proximaSemana))
+						aulasDaProximaSemana.add(aulas.get(i));
 
-	private static void contarAulasComSalasAtribuidas(List<Aula> aulas) {
-		int counti = 0;
-		for (Aula aula : aulas) {
-			if (!aula.getSalaAtribuida().isBlank()) {
-				counti++;
+				}
 			}
+
+			preencherAulasComSalaAtribuida(aulasDesseDia, salas);
+			atribuirSalas(aulasDesseDia, aulasDaProximaSemana, salas);
+
 		}
-		System.out.println("Numero de aulas com salas atribuidas " + counti);
-		System.out.println("Numero de aulas total " + aulas.size());
 	}
 
-	private static void atribuirSalas(List<Aula> aulasDesseDia, List<Sala> salas) {
+	/**
+	 * Atribui as aulas de um determinado dia às salas
+	 * 
+	 * @param aulasDesseDia        - aulas de um determinado dia
+	 * @param aulasDaProximaSemana
+	 * @param salas                - lista de salas
+	 */
+	private static void atribuirSalas(List<Aula> aulasDesseDia, List<Aula> aulasDaProximaSemana, List<Sala> salas) {
 		for (Sala sala : salas) {
 			for (Aula aula : aulasDesseDia) {
 				if (!aula.getSalaAtribuida().isBlank()) {
@@ -225,17 +314,8 @@ public class CsvImporter {
 					if (!sala.isTimeSlotUsed(slotIndex, finalSlotindex)) {
 
 						double overfitValue = overfitValues[aula.getDiaSemanaInt()];
-						metodoCustomOverfitECaracteristicas(aula, sala, slotIndex, finalSlotindex, overfitValue,
-								comCaracteristica);
-
-						/*
-						 * switch(metodoAUsar) { case "sextaESabado": metodoSextaSabado(aula, sala,
-						 * slotIndex, finalSlotindex); break; case "apenasCapacidade":
-						 * metodoApenasCapacidade(aula, sala, slotIndex, finalSlotindex); break; case
-						 * "comCaractECapac": metodoComCaractECapac(aula, sala, slotIndex,
-						 * finalSlotindex); break; }
-						 */
-
+						metodoCustomOverfitECaracteristicas(aula, aulasDaProximaSemana, sala, slotIndex, finalSlotindex,
+								overfitValue, comCaracteristica, manterSalas);
 					}
 				}
 			}
@@ -246,14 +326,33 @@ public class CsvImporter {
 		}
 	}
 
-	private static void metodoCustomOverfitECaracteristicas(Aula aulaDesseDia, Sala sala, int slotInicial,
-			int slotFinal, double overfitValue, boolean comCaracteristica) {
+	/**
+	 * Faz a atribuição da sala a uma determinada aula e ocupa o respetivo slot,
+	 * tendo em conta o overfit escolhido pelo utilizador e tendo em conta (ou não
+	 * tendo em conta) a característica da sala que está a ser atribuida.
+	 * 
+	 * @param aulaDesseDia         - aula à qual a sala irá ser atribuida
+	 * @param aulasDaProximaSemana
+	 * @param sala                 - sala a ser atribuida
+	 * @param slotInicial          - slot de inicio da aula
+	 * @param slotFinal            - slot final da aula
+	 * @param overfitValue         - valor de overfit da capacidade da sala
+	 * @param comCaracteristica    - true caso a característica da sala tenha que
+	 *                             corresponder, falso caso contrario
+	 * @param manterSalas2
+	 */
+	private static void metodoCustomOverfitECaracteristicas(Aula aulaDesseDia, List<Aula> aulasDaProximaSemana,
+			Sala sala, int slotInicial, int slotFinal, double overfitValue, boolean comCaracteristica,
+			boolean manterSalas2) {
 
 		double alunosExtra = sala.getCapacidadeNormal() * overfitValue;
 
 		if (comCaracteristica) {
 			if (sala.getCaracteristicas().contains(aulaDesseDia.getCaracteristicaPedida())
 					&& aulaDesseDia.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
+				if (manterSalas2) {
+					prencherAulasProximaSemana(aulaDesseDia, aulasDaProximaSemana, sala);
+				}
 				aulaDesseDia.setSalaAtribuida(sala.getNome());
 				aulaDesseDia.setLotacao(sala.getCapacidadeNormal());
 				aulaDesseDia.setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
@@ -262,6 +361,9 @@ public class CsvImporter {
 			}
 		} else {
 			if (aulaDesseDia.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
+				if (manterSalas2) {
+					prencherAulasProximaSemana(aulaDesseDia, aulasDaProximaSemana, sala);
+				}
 				aulaDesseDia.setSalaAtribuida(sala.getNome());
 				aulaDesseDia.setLotacao(sala.getCapacidadeNormal());
 				aulaDesseDia.setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
@@ -272,18 +374,53 @@ public class CsvImporter {
 
 	}
 
+	public static void prencherAulasProximaSemana(Aula aulaDesseDia, List<Aula> aulasProximaSemana, Sala sala) {
+		for (Aula alkas : aulasProximaSemana) {
+			if (alkas.getUnidadeCurricular().equals(aulaDesseDia.getUnidadeCurricular())
+					&& alkas.getTurma().equals(aulaDesseDia.getTurma())
+					&& alkas.getTurno().equals(aulaDesseDia.getTurno())
+					&& sala.getCaracteristicas().contains(alkas.getCaracteristicaPedida())
+
+			) {
+				alkas.setSalaAtribuida(sala.getNome());
+				alkas.setLotacao(sala.getCapacidadeNormal());
+				alkas.setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
+			}
+
+		}
+	}
+
+	/**
+	 * Inicia os slots da sala
+	 * 
+	 * @param index            - indice da sala
+	 * @param csvImporterArray - lista de salas
+	 */
 	private static void startSlotsArray(int index, List<Sala> csvImporterArray) {
 		if (index > 0) {
 			csvImporterArray.get(index - 1).criarSlots();
 		}
 	}
 
+	/**
+	 * Usado para preencher os slots das salas de aulas que tinham sido previamente
+	 * atribuidas (de forma manual no ficheiro excel ou após já ter executado um
+	 * algoritmo de atribuição)
+	 * 
+	 * @param aulas - aulas com parte das salas já atribuidas
+	 * @param salas - salas de aula
+	 */
 	private static void preencherAulasComSalaAtribuida(List<Aula> aulas, List<Sala> salas) {
 		for (Aula aula : aulas) {
 			if (!aula.getSalaAtribuida().isBlank()) {
 				for (Sala sala : salas) {
 					if (sala.getNome() == aula.getSalaAtribuida()) {
 						int slotIndex = sala.getSlotIndex(aula.getInicio());
+
+						if (slotIndex == -1) {
+							slotIndex = sala.getNextSlotIndex(aula.getInicio());
+						}
+
 						int finalSlotindex = sala.getSlotIndex(aula.getFim());
 						sala.setSlotsUsed(slotIndex, finalSlotindex);
 					}
@@ -292,6 +429,13 @@ public class CsvImporter {
 		}
 	}
 
+	/**
+	 * Escolhe e devolve uma lista, ordenada de acordo com o algoritmo escolhido.
+	 * 
+	 * @param salas     - lista de salas
+	 * @param algoritmo - algoritmo escolhido
+	 * @return lista ordenada segundo o algoritmo escolhido
+	 */
 	private static List<Sala> escolherAlgoritmoOrdenacao(List<Sala> salas, String algoritmo) {
 		switch (algoritmo) {
 		case "FIFO":
@@ -302,10 +446,20 @@ public class CsvImporter {
 			return baralharLista(salas);
 		case "LOWERCAPACITYFIRST":
 			return ordenarMenorCapacidadePrimeiro(salas);
+		case "LESSCARACTFIRST":
+			return ordenarMenosCaracteristicasPrimeiro(salas);
 		}
 		return salas;
 	}
 
+	/**
+	 * Altera a lista recebida de forma a devolver uma lista ordenada de modo a que
+	 * o primeiro elemento da lista seja o elemento que foi adicionado a mesma, e
+	 * assim sucessivamente.
+	 * 
+	 * @param salas
+	 * @return lista de salas ordenada segundo LIFO
+	 */
 	private static List<Sala> aplicarLIFO(List<Sala> salas) {
 		List<Sala> salasComNovaOrdem = new ArrayList<Sala>();
 		for (int i = salas.size() - 1; i >= 0; i--) {
@@ -314,11 +468,26 @@ public class CsvImporter {
 		return salasComNovaOrdem;
 	}
 
+	/**
+	 * Devolve a lista recebida, com os elementos baralhados aleatóriamente.
+	 * 
+	 * @param salas
+	 * @return lista de salas com os elementos baralhados
+	 */
 	private static List<Sala> baralharLista(List<Sala> salas) {
 		Collections.shuffle(salas);
 		return salas;
 	}
 
+	/**
+	 * Ordena a lista de salas recebida, de forma a devolver uma nova lista com os
+	 * mesmos elementos mas ordenados tendo em conta a capacidade da Sala. Estão
+	 * ordenados de forma crescente relativamente a capacidade da Sala, sendo o
+	 * primeiro elemento da lista a Sala com menor capacidade.
+	 * 
+	 * @param salas
+	 * @return lista de salas ordenada pela capacidade, de forma crescente
+	 */
 	private static List<Sala> ordenarMenorCapacidadePrimeiro(List<Sala> salas) {
 		List<Sala> salasAux = new ArrayList<Sala>(salas);
 		List<Sala> salasOrdenadas = new ArrayList<Sala>();
@@ -336,5 +505,35 @@ public class CsvImporter {
 		}
 		return salasOrdenadas;
 	}
+
+	/**
+	 * Ordena a lista de salas recebida, de forma a devolver uma nova lista com os
+	 * mesmos elementos mas ordenados tendo em conta o número de caracteristicas que
+	 * a sala tem. Estão ordenados de forma crescente relativamente ao numero de
+	 * caracteristicas da sala , sendo o primeiro elemento da lista a Sala com menor
+	 * numero de caracteristicas.
+	 * 
+	 * @param salas
+	 * @return
+	 */
+	private static List<Sala> ordenarMenosCaracteristicasPrimeiro(List<Sala> salas) {
+		List<Sala> salasAux = new ArrayList<Sala>(salas);
+		List<Sala> salasOrdenadas = new ArrayList<Sala>();
+
+		while (!salasAux.isEmpty()) {
+
+			Sala aux = salasAux.get(0);
+			for (Sala sala : salasAux) {
+				if (sala.getnCaracteristicas() < aux.getnCaracteristicas()) {
+					aux = sala;
+				}
+			}
+			salasOrdenadas.add(aux);
+			salasAux.remove(aux);
+		}
+		return salasOrdenadas;
+	}
+	
+	
 
 }

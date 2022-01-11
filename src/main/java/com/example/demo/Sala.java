@@ -1,8 +1,17 @@
 package com.example.demo;
+
 import java.util.ArrayList;
 
 import com.opencsv.bean.CsvBindByPosition;
 
+/**
+ * @author chainz
+ *
+ *         Representa um objeto do tipo Sala. Este é criado recorrendo ao
+ *         opencsv, que extrai informação de um ficheiro csv e carrega nos
+ *         atributos da class, de acordo com a posição em que se encontram no
+ *         ficheiro.
+ */
 public class Sala {
 
 	@CsvBindByPosition(position = 0)
@@ -18,7 +27,7 @@ public class Sala {
 	private int capacidadeExame;
 
 	@CsvBindByPosition(position = 4)
-	int nCaracteristicas;
+	private int nCaracteristicas;
 
 	ArrayList<String> caracteristicas = new ArrayList<String>();
 
@@ -35,39 +44,54 @@ public class Sala {
 				+ ", capacidadeExame=" + capacidadeExame + ", nCaracteristicas=" + nCaracteristicas
 				+ ", caracteristicas=" + caracteristicas + "           " + slots.size() + "]";
 	}
-	
-	
+
+	/**
+	 * @return caracteristicas da sala, num formato de ArrayList de Strings
+	 */
 	public ArrayList<String> getCaracteristicas() {
 		return caracteristicas;
 	}
-	
 
+	/**
+	 * @return caracteristicas da sala, num formato de String
+	 */
 	public String getCaracteristicasInString() {
 		String caracteristicasStr = "";
 		if (!caracteristicas.isEmpty()) {
-			for (int i =0; i<caracteristicas.size(); i++){
-				if (i == caracteristicas.size()-1) {
+			for (int i = 0; i < caracteristicas.size(); i++) {
+				if (i == caracteristicas.size() - 1) {
 					caracteristicasStr += caracteristicas.get(i);
 				} else {
 					caracteristicasStr += caracteristicas.get(i) + ",";
 				}
 			}
-			
+
 		} else {
 			caracteristicasStr = "";
 		}
-		
+
 		return caracteristicasStr;
 	}
 
+	/**
+	 * Adiciona características à sala
+	 * 
+	 * @param specificCaracteristicas - caracteristicas a adicionar
+	 */
 	public void setCaracteristicas(String specificCaracteristicas) {
 		this.caracteristicas.add(specificCaracteristicas);
 	}
 
+	/**
+	 * @return capacidade normal da sala
+	 */
 	public int getCapacidadeNormal() {
 		return capacidadeNormal;
 	}
 
+	/**
+	 * @return array de slots da sala
+	 */
 	public ArrayList<Slot> getSlotArray() {
 		return slots;
 	}
@@ -82,10 +106,6 @@ public class Sala {
 		}
 	}
 
-	public void setCapacidadeNormal(int capacidadeNormal) {
-		this.capacidadeNormal = capacidadeNormal;
-	}
-
 	public int getSlotIndex(String time) {
 		for (Slot s : slots) {
 			if (time.equals(s.getTimeSlot()) && !s.isUsedTimeSlot()) {
@@ -96,6 +116,23 @@ public class Sala {
 
 	}
 
+	public int getNextSlotIndex(String time) {
+		for (int i = 0; i < slots.size(); i++) {
+			if (time.equals(slots.get(i).getTimeSlot())) {
+				return i + 1;
+			}
+		}
+		return -1;
+
+	}
+
+	/**
+	 * Indica se o time slot em questão está preenchido (a ser utilizado) ou não
+	 * 
+	 * @param index
+	 * @param finalIndex
+	 * @return true se estiver usado, false caso contrario
+	 */
 	public boolean isTimeSlotUsed(int index, int finalIndex) {
 		for (int i = index; i <= finalIndex; i++) {
 			if (slots.get(i).isUsedTimeSlot())
@@ -104,11 +141,24 @@ public class Sala {
 		return false;
 	}
 
+	/**
+	 * Marca o slot como ocupado
+	 * 
+	 * @param firstslotIndex - hora de inicio
+	 * @param finalSlotIndex - hora de fim
+	 */
 	public void setSlotsUsed(int firstslotIndex, int finalSlotIndex) {
 		for (int i = firstslotIndex; i <= finalSlotIndex; i++)
 			slots.get(i).setUsedTimeSlot(true);
 	}
 
+	/**
+	 * Indica se o slot correspondente a uma determinada hora se encontra disponivel
+	 * ou não
+	 * 
+	 * @param time
+	 * @return true se o slot estiver disponivel, falso caso contrario
+	 */
 	public boolean isSlotAvailable(String time) {
 		for (Slot s : slots) {
 			if (time.equals(s.getTimeSlot()) && !s.isUsedTimeSlot()) {
@@ -118,14 +168,18 @@ public class Sala {
 		return false;
 	}
 
-	public void showSlots() {
-		for (Slot s : slots)
-			System.out.println(s.getTimeSlot() + "    " + s.isUsedTimeSlot());
-
-	}
-
+	/**
+	 * @return nome do edificio da sala
+	 */
 	public String getEdificio() {
 		return edificio;
+	}
+
+	/**
+	 * @return número de caracteristicas que a sala tem
+	 */
+	public int getnCaracteristicas() {
+		return nCaracteristicas;
 	}
 
 }
