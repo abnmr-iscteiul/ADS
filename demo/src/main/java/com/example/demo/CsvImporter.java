@@ -408,7 +408,7 @@ public class CsvImporter {
 	 * algoritmo de atribuição)
 	 * 
 	 * @param aulas - aulas com parte das salas já atribuidas
-	 * @param salas
+	 * @param salas - salas de aula
 	 */
 	private static void preencherAulasComSalaAtribuida(List<Aula> aulas, List<Sala> salas) {
 		for (Aula aula : aulas) {
