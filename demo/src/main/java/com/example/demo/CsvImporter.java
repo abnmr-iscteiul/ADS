@@ -7,12 +7,14 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +27,9 @@ public class CsvImporter {
 
 	private static double[] overfitValues;
 	private static boolean comCaracteristica;
+	private static boolean manterSalas;
 	private static ArrayList<String> algoritmosEscolhidos;
-
-	/**
+/**
 	 * Recebe os objetos provenientes da interação entre o utilizador e a GUI. Atua
 	 * como main da aplicação, executando os passos necessários para fazer a
 	 * atribuição de salas de acordo com os parâmetros escolhidos pelo utilizador.
@@ -48,16 +50,16 @@ public class CsvImporter {
 	 * @param algoritmosEscolhidos1 - indica o algoritmo de ordenação escolhido
 	 * @return metricas de avaliação das atribuições efetuadas
 	 */
-	public static ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path,
-			double[] overfitValues1, boolean comCaracteristica1, ArrayList<String> algoritmosEscolhidos1)
-			throws IllegalStateException, IOException, CsvException {
 
-		System.out.println(comCaracteristica1);
+	public static ArrayList<int[]> resultado(String fileNameAulas, String fileNameSala, String path,
+			double[] overfitValues1, boolean comCaracteristica1, boolean manterSala1,
+			ArrayList<String> algoritmosEscolhidos1) throws IllegalStateException, IOException, CsvException {
+
 		ArrayList<int[]> printableResults = new ArrayList<int[]>();
 		overfitValues = overfitValues1;
 		comCaracteristica = comCaracteristica1;
 		algoritmosEscolhidos = algoritmosEscolhidos1;
-
+		manterSalas = manterSala1;
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
@@ -129,6 +131,10 @@ public class CsvImporter {
 
 		uniqueDates.remove("");
 		ArrayList<String> uniqueDatesArray = new ArrayList<>(uniqueDates);
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		Collections.sort(uniqueDatesArray,
+				(s1, s2) -> LocalDate.parse(s1, formatter).compareTo(LocalDate.parse(s2, formatter)));
 
 		return uniqueDatesArray;
 	}
@@ -227,7 +233,31 @@ public class CsvImporter {
 				}
 			}
 		}
-		System.out.println("CSV File Size   " + csvReader.size());
+		// System.out.println("CSV File Size " + csvReader.size());
+	}
+
+	public static String getProximaDiaProximaSemana(String date, ArrayList<String> uniqueDates) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		int indexOfDate = uniqueDates.indexOf(date);
+		String dayNextWeek = "";
+
+		if (indexOfDate < uniqueDates.size() - 7) {
+			LocalDate d1 = LocalDate.parse(uniqueDates.get(indexOfDate), formatter);
+
+			for (int j = 0; j < 8; j++) {
+				LocalDate d2 = LocalDate.parse(uniqueDates.get(indexOfDate + j), formatter);
+				long diffDays = Duration.between(d1.atStartOfDay(), d2.atStartOfDay()).toDays();
+				if (diffDays == 7) {
+					dayNextWeek = uniqueDates.get(indexOfDate + j);
+
+					break;
+				}
+
+			}
+
+		}
+
+		return dayNextWeek;
 	}
 
 	/**
@@ -241,24 +271,37 @@ public class CsvImporter {
 
 		for (String s : uniqueDates) {
 			List<Aula> aulasDesseDia = new ArrayList<>();
+			List<Aula> aulasDaProximaSemana = new ArrayList<>();
+
+			String proximaSemana = getProximaDiaProximaSemana(s, uniqueDates);
 
 			for (int i = 0; i < aulas.size(); i++) {
 				if (aulas.get(i).getDia().equals(s))
 					aulasDesseDia.add(aulas.get(i));
 
 			}
+			if (!proximaSemana.equals("")) {
+				for (int i = 0; i < aulas.size(); i++) {
+					if (aulas.get(i).getDia().equals(proximaSemana))
+						aulasDaProximaSemana.add(aulas.get(i));
+
+				}
+			}
+
 			preencherAulasComSalaAtribuida(aulasDesseDia, salas);
-			atribuirSalas(aulasDesseDia, salas);
+			atribuirSalas(aulasDesseDia, aulasDaProximaSemana, salas);
+
 		}
 	}
 
 	/**
 	 * Atribui as aulas de um determinado dia às salas
 	 * 
-	 * @param aulasDesseDia - aulas de um determinado dia
-	 * @param salas         - lista de salas
+	 * @param aulasDesseDia        - aulas de um determinado dia
+	 * @param aulasDaProximaSemana
+	 * @param salas                - lista de salas
 	 */
-	private static void atribuirSalas(List<Aula> aulasDesseDia, List<Sala> salas) {
+	private static void atribuirSalas(List<Aula> aulasDesseDia, List<Aula> aulasDaProximaSemana, List<Sala> salas) {
 		for (Sala sala : salas) {
 			for (Aula aula : aulasDesseDia) {
 				if (!aula.getSalaAtribuida().isBlank()) {
@@ -271,8 +314,8 @@ public class CsvImporter {
 					if (!sala.isTimeSlotUsed(slotIndex, finalSlotindex)) {
 
 						double overfitValue = overfitValues[aula.getDiaSemanaInt()];
-						metodoCustomOverfitECaracteristicas(aula, sala, slotIndex, finalSlotindex, overfitValue,
-								comCaracteristica);
+						metodoCustomOverfitECaracteristicas(aula, aulasDaProximaSemana, sala, slotIndex, finalSlotindex,
+								overfitValue, comCaracteristica, manterSalas);
 					}
 				}
 			}
@@ -288,22 +331,28 @@ public class CsvImporter {
 	 * tendo em conta o overfit escolhido pelo utilizador e tendo em conta (ou não
 	 * tendo em conta) a característica da sala que está a ser atribuida.
 	 * 
-	 * @param aulaDesseDia      - aula à qual a sala irá ser atribuida
-	 * @param sala              - sala a ser atribuida
-	 * @param slotInicial       - slot de inicio da aula
-	 * @param slotFinal         - slot final da aula
-	 * @param overfitValue      - valor de overfit da capacidade da sala
-	 * @param comCaracteristica - true caso a característica da sala tenha que
-	 *                          corresponder, falso caso contrario
+	 * @param aulaDesseDia         - aula à qual a sala irá ser atribuida
+	 * @param aulasDaProximaSemana
+	 * @param sala                 - sala a ser atribuida
+	 * @param slotInicial          - slot de inicio da aula
+	 * @param slotFinal            - slot final da aula
+	 * @param overfitValue         - valor de overfit da capacidade da sala
+	 * @param comCaracteristica    - true caso a característica da sala tenha que
+	 *                             corresponder, falso caso contrario
+	 * @param manterSalas2
 	 */
-	private static void metodoCustomOverfitECaracteristicas(Aula aulaDesseDia, Sala sala, int slotInicial,
-			int slotFinal, double overfitValue, boolean comCaracteristica) {
+	private static void metodoCustomOverfitECaracteristicas(Aula aulaDesseDia, List<Aula> aulasDaProximaSemana,
+			Sala sala, int slotInicial, int slotFinal, double overfitValue, boolean comCaracteristica,
+			boolean manterSalas2) {
 
 		double alunosExtra = sala.getCapacidadeNormal() * overfitValue;
 
 		if (comCaracteristica) {
 			if (sala.getCaracteristicas().contains(aulaDesseDia.getCaracteristicaPedida())
 					&& aulaDesseDia.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
+				if (manterSalas2) {
+					prencherAulasProximaSemana(aulaDesseDia, aulasDaProximaSemana, sala);
+				}
 				aulaDesseDia.setSalaAtribuida(sala.getNome());
 				aulaDesseDia.setLotacao(sala.getCapacidadeNormal());
 				aulaDesseDia.setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
@@ -312,6 +361,9 @@ public class CsvImporter {
 			}
 		} else {
 			if (aulaDesseDia.getNumeroInscritos() < (sala.getCapacidadeNormal() + alunosExtra)) {
+				if (manterSalas2) {
+					prencherAulasProximaSemana(aulaDesseDia, aulasDaProximaSemana, sala);
+				}
 				aulaDesseDia.setSalaAtribuida(sala.getNome());
 				aulaDesseDia.setLotacao(sala.getCapacidadeNormal());
 				aulaDesseDia.setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
@@ -320,6 +372,22 @@ public class CsvImporter {
 			}
 		}
 
+	}
+
+	public static void prencherAulasProximaSemana(Aula aulaDesseDia, List<Aula> aulasProximaSemana, Sala sala) {
+		for (Aula alkas : aulasProximaSemana) {
+			if (alkas.getUnidadeCurricular().equals(aulaDesseDia.getUnidadeCurricular())
+					&& alkas.getTurma().equals(aulaDesseDia.getTurma())
+					&& alkas.getTurno().equals(aulaDesseDia.getTurno())
+					&& sala.getCaracteristicas().contains(alkas.getCaracteristicaPedida())
+
+			) {
+				alkas.setSalaAtribuida(sala.getNome());
+				alkas.setLotacao(sala.getCapacidadeNormal());
+				alkas.setCaracteristicasReaisDaSala(sala.getCaracteristicasInString());
+			}
+
+		}
 	}
 
 	/**
@@ -340,7 +408,7 @@ public class CsvImporter {
 	 * algoritmo de atribuição)
 	 * 
 	 * @param aulas - aulas com parte das salas já atribuidas
-	 * @param salas
+	 * @param salas - salas de aula
 	 */
 	private static void preencherAulasComSalaAtribuida(List<Aula> aulas, List<Sala> salas) {
 		for (Aula aula : aulas) {
@@ -348,6 +416,11 @@ public class CsvImporter {
 				for (Sala sala : salas) {
 					if (sala.getNome() == aula.getSalaAtribuida()) {
 						int slotIndex = sala.getSlotIndex(aula.getInicio());
+
+						if (slotIndex == -1) {
+							slotIndex = sala.getNextSlotIndex(aula.getInicio());
+						}
+
 						int finalSlotindex = sala.getSlotIndex(aula.getFim());
 						sala.setSlotsUsed(slotIndex, finalSlotindex);
 					}
@@ -460,5 +533,7 @@ public class CsvImporter {
 		}
 		return salasOrdenadas;
 	}
+	
+	
 
 }
