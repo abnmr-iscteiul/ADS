@@ -3,6 +3,9 @@ package com.example.demo;
 import java.util.ArrayList;
 import java.util.List;
 
+// Nº de salas utilizadas
+// Nº de salas sempre livres num dia
+
 /**
  * @author chainz
  *
@@ -18,8 +21,10 @@ public class Avaliacao {
 	private int numTrocasEdificio;
 	private int numTrocasSala;
 	private int numSalasAtribComCaracPedida;
+	private int numSalasNaoUtilizadas;
+	private int numSalasLivresTodoDia;
 	private int algoritmo;
-	private int NUM_METRICAS = 5;
+	private int NUM_METRICAS = 7;
 
 	 
 	Avaliacao(List<Aula> aulas, List<Sala> salas, String algoritmo) {
@@ -29,6 +34,8 @@ public class Avaliacao {
 		this.numTrocasEdificio = calcularNumTrocasEdificio();
 		this.numTrocasSala = calcularNumTrocasSala();
 		this.numSalasAtribComCaracPedida = calcularNumSalasAtribComCaracPedida();
+		this.numSalasNaoUtilizadas = calcularNumSalasNaoUtilizadas();
+		this.numSalasLivresTodoDia = calcularNumSalasLivresTodoDia();
 		
 		if(algoritmo=="FIFO")
 			this.algoritmo=0;
@@ -182,6 +189,40 @@ public class Avaliacao {
 		return count;
 	}
 	
+	private int calcularNumSalasNaoUtilizadas() {
+		List<String> salasUtilizadas = new ArrayList<>();
+		for (Aula aula : aulas) {
+			if(!salasUtilizadas.contains(aula.getSalaAtribuida())) {
+				salasUtilizadas.add(aula.getSalaAtribuida());
+			}
+		}
+		return salas.size() - salasUtilizadas.size();
+	}
+	
+	private int calcularNumSalasLivresTodoDia() {
+		ArrayList<String> uniqueDates = CsvImporter.getAllDates(aulas);
+		int salasLivres = 0;
+		
+		for (String data : uniqueDates) {
+			List<Aula> aulasDesseDia = new ArrayList<>();
+			List<String> salasUtilizadas = new ArrayList<>();
+
+			for (int i = 0; i < aulas.size(); i++) {
+				if (aulas.get(i).getDia().equals(data))
+					aulasDesseDia.add(aulas.get(i));
+			}
+			
+			for (Aula aula : aulasDesseDia) {
+				if(!salasUtilizadas.contains(aula.getSalaAtribuida())) {
+					salasUtilizadas.add(aula.getSalaAtribuida());
+				}
+			}
+			
+			salasLivres += salas.size() - salasUtilizadas.size();
+		}
+		
+		return salasLivres;
+	}
 
 	/**
 	 * Devolve o resultado da avaliação de todas as metricas
@@ -195,7 +236,9 @@ public class Avaliacao {
 		resultados[2] = numTrocasSala;
 		resultados[3] = numSalasAtribComCaracPedida;
 		resultados[4] = aulas.size();
-		resultados[5] = algoritmo;
+		resultados[5] = numSalasNaoUtilizadas;
+		resultados[6] = numSalasLivresTodoDia;
+		resultados[7] = algoritmo;
 		return resultados;
 	}
 }
