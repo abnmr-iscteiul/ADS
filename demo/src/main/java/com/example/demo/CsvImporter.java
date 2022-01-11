@@ -7,7 +7,6 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -17,6 +16,12 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.io.File;
+<<<<<<< Updated upstream
+=======
+import java.util.ArrayList;
+import java.util.List;
+
+>>>>>>> Stashed changes
 import java.util.*;
 
 public class CsvImporter {
@@ -28,8 +33,7 @@ public class CsvImporter {
 	private static boolean comCaracteristica;
 	private static boolean manterSalas;
 	private static ArrayList<String> algoritmosEscolhidos;
-
-	/**
+/**
 	 * Recebe os objetos provenientes da interação entre o utilizador e a GUI. Atua
 	 * como main da aplicação, executando os passos necessários para fazer a
 	 * atribuição de salas de acordo com os parâmetros escolhidos pelo utilizador.
@@ -55,13 +59,16 @@ public class CsvImporter {
 			double[] overfitValues1, boolean comCaracteristica1, boolean manterSala1,
 			ArrayList<String> algoritmosEscolhidos1) throws IllegalStateException, IOException, CsvException {
 
-		System.out.println(comCaracteristica1);
 		ArrayList<int[]> printableResults = new ArrayList<int[]>();
 		overfitValues = overfitValues1;
 		comCaracteristica = comCaracteristica1;
 		algoritmosEscolhidos = algoritmosEscolhidos1;
+<<<<<<< Updated upstream
 		manterSalas = manterSala1;
 
+=======
+		
+>>>>>>> Stashed changes
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
@@ -540,5 +547,7 @@ public class CsvImporter {
 		}
 		return salasOrdenadas;
 	}
+	
+	
 
 }
