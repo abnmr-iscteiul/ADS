@@ -16,12 +16,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.io.File;
-<<<<<<< Updated upstream
-=======
 import java.util.ArrayList;
 import java.util.List;
-
->>>>>>> Stashed changes
 import java.util.*;
 
 public class CsvImporter {
@@ -63,12 +59,7 @@ public class CsvImporter {
 		overfitValues = overfitValues1;
 		comCaracteristica = comCaracteristica1;
 		algoritmosEscolhidos = algoritmosEscolhidos1;
-<<<<<<< Updated upstream
 		manterSalas = manterSala1;
-
-=======
-		
->>>>>>> Stashed changes
 		List<Sala> salas = new CsvToBeanBuilder<Sala>(new FileReader(fileNameSala)).withSkipLines(1).withSeparator(';')
 				.withType(Sala.class).build().parse();
 
@@ -87,11 +78,6 @@ public class CsvImporter {
 			Avaliacao avaliacao = new Avaliacao(aulas, salas, algoritmo);
 
 			printableResults.add(avaliacao.getAvaliacao());
-
-			for (int i = 0; i < printableResults.size(); i++) {
-				System.out.println(printableResults.get(0)[i]);
-			}
-			System.out.println("#########################");
 
 			printCSVFinal(fileNameAulas, aulas, resultado);
 		}

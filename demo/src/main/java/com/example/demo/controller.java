@@ -126,7 +126,6 @@ public class controller {
 	}
 
 	@PostMapping("/post")
-<<<<<<< Updated upstream
 	public String post(Model model, @RequestParam("salas") MultipartFile file,
 			@RequestParam("horarios") MultipartFile file2, @RequestParam(required = false, value = "FIFO") String FIFO,
 			@RequestParam(required = false, value = "LIFO") String LIFO,
@@ -141,19 +140,7 @@ public class controller {
 			@RequestParam(required = false, value = "sabado") String sabado,
 			@RequestParam(required = false, value = "flexRadioCaract") String caracter,
 			@RequestParam(required = false, value = "flexRadioCaractSala") String caracterSala) {
-=======
-	public String post(Model model,@RequestParam("salas") MultipartFile file,@RequestParam("horarios") MultipartFile file2,
-			@RequestParam(required=false,value="FIFO") String FIFO,
-			@RequestParam(required=false,value="LIFO") String LIFO, @RequestParam(required=false,value="random") String random,
-			@RequestParam(required=false,value="LCF") String LCF,
-			@RequestParam(required=false,value="LESSCARACTFIRST") String LESSCARACTFIRST,
-			@RequestParam(required=false,value="segunda") String segunda,
-			@RequestParam(required=false,value="terca") String terca, @RequestParam(required=false,value="quarta") String quarta,
-			@RequestParam(required=false,value="quinta") String quinta, @RequestParam(required=false,value="sexta") String sexta, 
-			@RequestParam(required=false,value="sabado") String sabado
-			, @RequestParam(required=false,value="flexRadioCaract") String caracter) {
 
-		
 		Path filepath = Paths.get("src/main/resources", file.getOriginalFilename());
 		try (OutputStream os = Files.newOutputStream(filepath)) {
 			os.write(file.getBytes());
@@ -164,8 +151,8 @@ public class controller {
 		Path filepath2 = Paths.get("src/main/resources", file2.getOriginalFilename());
 
 		try (OutputStream os = Files.newOutputStream(filepath2)) {
-	        os.write(file2.getBytes());
-	    } catch (IOException e) {
+			os.write(file2.getBytes());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		CSVReader csvReader;
@@ -174,8 +161,8 @@ public class controller {
 		params.add(filepath.toString());params.add(filepath2.toString());params.add(FIFO);params.add(LIFO);params.add(random);params.add(LCF);
 		params.add(LESSCARACTFIRST);params.add(segunda);params.add(terca);params.add(quarta);
 		params.add(quinta);params.add(sexta);params.add(sabado);params.add(caracter);
+		params.add(caracterSala);
 		try {
-
 			csvReader = new CSVReader(new FileReader(filepath.toString()));
 			List<String[]> csvData = csvReader.readAll();
 			String columns=csvData.get(0)[0];
@@ -193,7 +180,7 @@ public class controller {
 				return "options";
 			}
 			if(items.equals(defaultColumns)){
-				
+
 			}
 			else {
 				model.addAttribute("colunas",items);
@@ -203,7 +190,7 @@ public class controller {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
->>>>>>> Stashed changes
+		
 		boolean caract;
 
 		resultado = new ArrayList<int[]>();
@@ -218,25 +205,20 @@ public class controller {
 		if (caracterSala.equals("true"))
 			caractSala = true;
 		else
-<<<<<<< Updated upstream
 			caractSala = false;
 
-		Path filepath = Paths.get("src/main/resources", file.getOriginalFilename());
 		double[] overfitValues = new double[6];
-		if (segunda != null)
-			overfitValues[0] = Double.parseDouble(segunda) / 100;
-=======
-			caract=false;
-		double[] overfitValues= new double[6];
+		
 		if(segunda!=null)
 			overfitValues[0]=Double.parseDouble(segunda)/100;
->>>>>>> Stashed changes
 		else
 			overfitValues[0] = 0;
+
 		if (terca != null)
 			overfitValues[1] = Double.parseDouble(terca) / 100;
 		else
 			overfitValues[1] = 0;
+		
 		if (quarta != null)
 			overfitValues[2] = Double.parseDouble(quarta) / 100;
 		else
@@ -266,15 +248,12 @@ public class controller {
 			algoritmosEscolhidos.add("LOWERCAPACITYFIRST");
 		if (LESSCARACTFIRST != null)
 			algoritmosEscolhidos.add("LESSCARACTFIRST");
-<<<<<<< Updated upstream
 
 		try (OutputStream os = Files.newOutputStream(filepath)) {
 			os.write(file.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		Path filepath2 = Paths.get("src/main/resources", file2.getOriginalFilename());
 
 		try (OutputStream os = Files.newOutputStream(filepath2)) {
 			os.write(file2.getBytes());
@@ -287,34 +266,25 @@ public class controller {
 					algoritmosEscolhidos);
 			model.addAttribute("resultado", resultado);
 		} catch (IllegalStateException | IOException | CsvException e) {
-=======
-		
-
-	    try {
-	    	 resultado=CsvImporter.resultado(filepath.toString(), filepath2.toString(),Paths.get("src/main/resources", "final").toString(),
-	    			 overfitValues,caract,algoritmosEscolhidos);
-	    	 model.addAttribute("resultado",resultado);
-	    } catch (IllegalStateException | IOException | CsvException e) {
-			e.printStackTrace();
+			
 		}
-	    String csvOutputFile;
+		String csvOutputFile;
 		try {
 			csvOutputFile = Files.readString(Paths.get("src/main/resources", "final"+algoritmosEscolhidos.get(0)+".csv"));
 			model.addAttribute("CSV",csvOutputFile);
 			model.addAttribute("nome",algoritmosEscolhidos.get(0));		
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}	
 		return "res";
 	}
-	
+
 	@PostMapping("/post2")
 	public String post2(Model model,@RequestParam("1") String string,@RequestParam("2") String string2,@RequestParam("3") String string3,@RequestParam("4") String string4
 			,@RequestParam("5") String string5,@RequestParam("6") String string6,@RequestParam("7") String string7,@RequestParam("8") String string8,
 			@RequestParam("9") String string9
 			,@RequestParam("10") String string10,@RequestParam("11") String string11,@RequestParam("12") String string12,@RequestParam("13") String string13) {
-		
+
 		try {
 			CSV copy= new CSV(new File(params.get(0)),items.size());
 			CSV base = new CSV (new File("src/main/resources/base.csv"),defaultColumns.size());
@@ -338,7 +308,14 @@ public class controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	 		
+
+		boolean caractSala;
+
+		if (params.get(14).equals("true"))
+			caractSala = true;
+		else
+			caractSala = false;
+		
 		boolean caract;
 		resultado= new ArrayList<int[]>();
 		
@@ -386,10 +363,9 @@ public class controller {
 			algoritmosEscolhidos.add("LESSCARACTFIRST");
 	    try {
 	    	 resultado=CsvImporter.resultado("src/main/resources/base.csv", params.get(1),Paths.get("src/main/resources", "final").toString(),
-	    			 overfitValues,caract,algoritmosEscolhidos);
+	    			 overfitValues,caract,caractSala,algoritmosEscolhidos);
 	    	 model.addAttribute("resultado",resultado);
 	    } catch (IllegalStateException | IOException | CsvException e) {
->>>>>>> Stashed changes
 			e.printStackTrace();
 		}
 		String csvOutputFile;
@@ -403,8 +379,4 @@ public class controller {
 		}
 		return "res";
 	}
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 }
