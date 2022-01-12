@@ -55,7 +55,6 @@
 			calendar.render();
 			showTable()
 			dropdownCreator()
-			plotData()
 			handleTable()
 			dropdownAlgorithmCreator()
 		});
@@ -73,6 +72,10 @@
 		var totalClasses = resultado[0][4]
 		var rainbomTableAlgorithms = ['FIFO', 'LIFO', 'Aleatório', 'Menor Capacidade Primeiro', 'Menor Nº de Características Primeiro']
 		var rainbomTableAlgorithms2 = ['FIFO', 'LIFO', 'RANDOM', 'LOWERCAPACITYFIRST', 'LESSCARACTFIRST']
+
+		resultado.forEach( result => {
+			result.splice(4, 1)
+		})
 		
 		
 		rows.forEach(row => {
@@ -101,16 +104,10 @@
 		
 		const firstLine = arrayResults.shift();
 
-		
-		//console.log(firstLine);
-
-
-
 		function dropdownAlgorithmCreator(){
 			$("#dropdownAlgorithm").html('Algoritmo (' + nome + ')')
 			$("#download").attr("href", "/download/" + rainbomTableAlgorithms2[rainbomTableAlgorithms.indexOf(nome)]);
 			resultado.forEach( result => {
-				console.log(result)
 				$("#dropdownAlgorithmUl").append("<li><a class='dropdown-item' href='"+"/"+rainbomTableAlgorithms2[result[4]]+"'>"+rainbomTableAlgorithms[result[4]]+"</a></li>")
 			})
 		}
@@ -197,6 +194,7 @@
 			$("#tabulator").hide();
 			$("#radialGraph").show();
 			$("#graph-row").show();
+			plotData()
 		}
 
 
@@ -206,23 +204,38 @@
 		}
 
 		function plotData(){
-			data = []
-			i = 0
-			$("#graph-total").append("<h2 class='fs-6'>Nº Total de Aulas: " + totalClasses + "</h2>")
+
+			let xLabels = []
+			let yIndex = []
+			let data = []
+
+			for (let i = 0; i < $("[name='plotX']").length; i++) {
+				let element = $("[name='plotX']")[i];
+				if ($(element).is(':checked')) {
+					xLabels.push($(element).val())
+					yIndex.push(i)
+				} 
+			}
+
+			
+
 			resultado.forEach( result => {
-				result.splice(4, 1);
+				let yValues = []
+				yIndex.forEach( i =>{
+					yValues.push(result[i])
+				})
 				data.push(
 					{
 						type: 'bar',
-						y: result,
-						x: ['Nº Aulas com sala atribuída','Nº Trocas de edifício','Nº Trocas de Sala', 'Nº Salas atribuídas com característica pedida'],
-						name: rainbomTableAlgorithms[result[4]]
+						y: yValues,
+						x: xLabels,
+						name: rainbomTableAlgorithms[result[6]]
 					}
 				)
-				i += 1
 			})
 
 			layout = {
+				title: "Nº Total de Aulas: " + totalClasses,
 				polar: {
 					radialaxis: {
 					visible: false,
@@ -231,7 +244,7 @@
 				}
 			}
 
-			Plotly.newPlot("radialGraph", data, layout)
+			Plotly.newPlot("graph", data, layout)
 		}
 	</script>
 
@@ -278,13 +291,43 @@
 						<h2>Curso: MEI</h2>
 					</div>
 				</div>
-				<div class="row justify-content-center" id="graph-row">
-					<div class="dropdown d-grid gap-2 col p-3 text-center"
-						id="graph-total"></div>
-				</div>
 				<div id='calendar'></div>
 				<div id="tabulator"></div>
-				<div class="w-100 h-50" id="radialGraph"></div>
+				<div class="h-100 row" id="radialGraph">
+					<div class="col-8" id="graph"></div>
+					<div class="col-3 m-3 m-auto justify-content-center" id="graph-row">
+						<h4 class="text-center mb-3">Métricas</h4>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input"  id="salaAtr" name="plotX" value="Nº Aulas com sala atribuída" checked>
+							<label class="form-check-label" for="salaAtr">Nº Aulas com sala atribuída</label>
+						</div>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="trocasEdif" name="plotX" value="Nº Trocas de edifício" checked>
+							<label class="form-check-label" for="trocasEdif">Nº Trocas de edifício</label>
+						</div>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="trocasSala" name="plotX" value="Nº Trocas de Sala" checked>
+							<label class="form-check-label" for="trocasSala">Nº Trocas de Sala</label>
+						</div>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="salaCaract" name="plotX" value="Nº Salas atribuídas com característica pedida" checked>
+							<label class="form-check-label" for="salaCaract">Nº Salas atribuídas com característica pedida</label>
+						</div>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="salasNaoUtil" name="plotX" value="Nº Salas nunca utilizadas" checked>
+							<label class="form-check-label" for="salasNaoUtil">Nº Salas nunca utilizadas</label>
+						</div>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="salasLivresTodoDia" name="plotX" value="Nº Salas livres todo o dia" checked>
+							<label class="form-check-label" for="salasLivresTodoDia">Nº Salas livres todo o dia</label>
+						</div>
+						<div class="row my-3">
+							<div class="col text-center">
+								<button type="button" class="btn btn-primary" onclick="plotData()">Desenhar</button>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
