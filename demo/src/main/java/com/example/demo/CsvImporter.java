@@ -78,9 +78,21 @@ public class CsvImporter {
 			Avaliacao avaliacao = new Avaliacao(aulas, salas, algoritmo);
 
 			printableResults.add(avaliacao.getAvaliacao());
-
+			NSGAIIStudy study = new NSGAIIStudy();
+			study.executar(aulas);
 			printCSVFinal(fileNameAulas, aulas, resultado);
 		}
+		
+		 
+//		List<Aula> aulas = new CsvToBeanBuilder<Aula>(new FileReader(fileNameAulas)).withSkipLines(1)
+//				.withSeparator(';').withType(Aula.class).build().parse();
+//		 NSGAIIStudy study = new NSGAIIStudy();
+		
+		 
+//		
+//		 
+//		 for(int j=0;j<aulas.size();j++)
+//			 System.out.println(aulas.get(j).getDia()+" "+aulas.get(j).getFim()+" "+aulas.get(j).getCurso());
 		return printableResults;
 	}
 

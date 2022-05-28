@@ -83,6 +83,18 @@ public class Aula {
 		}
 		return 10;
 	}
+	
+	public String getCurso() {
+		return curso;
+	}
+
+	public void setCurso(String curso) {
+		this.curso = curso;
+	}
+
+	public void setCaracteristicaPedida(String caracteristicaPedida) {
+		this.caracteristicaPedida = caracteristicaPedida;
+	}
 
 	/**
 	 * @return hora de inicio da aula
@@ -106,6 +118,19 @@ public class Aula {
 	 */
 	public int getNumeroInscritos() {
 		return numeroInscritos;
+	}
+	
+	
+	public void setInicio(String inicio) {
+		this.inicio = inicio;
+	}
+
+	public void setFim(String fim) {
+		this.fim = fim;
+	}
+
+	public void setDia(String dia) {
+		this.dia = dia;
 	}
 
 	/**

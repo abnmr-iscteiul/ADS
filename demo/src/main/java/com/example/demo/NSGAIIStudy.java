@@ -56,7 +56,7 @@ import ch.qos.logback.core.util.FileUtil;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class NSGAIIStudy {
-  private static final int INDEPENDENT_RUNS = 5;
+  private static final int INDEPENDENT_RUNS = 1;
 
   public static void main(String[] args) throws IOException {
     String experimentBaseDirectory = "base";
@@ -64,7 +64,7 @@ public class NSGAIIStudy {
     
     List<ExperimentProblem<IntegerSolution>> problemList = new ArrayList<>();
    
-    problemList.add(new ExperimentProblem<>(new NMMin()));
+   // problemList.add(new ExperimentProblem<>(new Timetabling()));
 
     List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithmList =
         configureAlgorithmList(problemList);
@@ -92,12 +92,52 @@ public class NSGAIIStudy {
 
     new ExecuteAlgorithms<>(experiment).run();
     new ComputeQualityIndicators<>(experiment).run();
-    new GenerateLatexTablesWithStatistics(experiment).run();
-    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
-    new GenerateFriedmanTestTables<>(experiment).run();
-    new GenerateBoxplotsWithR<>(experiment).setRows(2).setColumns(3).run();
+//    new GenerateLatexTablesWithStatistics(experiment).run();
+//    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+//    new GenerateFriedmanTestTables<>(experiment).run();
+//    new GenerateBoxplotsWithR<>(experiment).setRows(2).setColumns(3).run();
   }
 
+  public void executar(List<Aula> aulas) throws IOException{
+	  String experimentBaseDirectory = "base";
+	    FileUtils.deleteDirectory(new File("base/NSGAIIStudy/data"));
+	    
+	    List<ExperimentProblem<IntegerSolution>> problemList = new ArrayList<>();
+	   
+	    problemList.add(new ExperimentProblem<>(new Timetabling(aulas)));
+
+	    List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithmList =
+	        configureAlgorithmList(problemList);
+
+	    Experiment<IntegerSolution, List<IntegerSolution>> experiment =
+	        new ExperimentBuilder<IntegerSolution, List<IntegerSolution>>("NSGAIIStudy")
+	            .setAlgorithmList(algorithmList)
+	            .setProblemList(problemList)
+	            .setExperimentBaseDirectory(experimentBaseDirectory)
+	            .setOutputParetoFrontFileName("FUN")
+	            .setOutputParetoSetFileName("VAR")
+	            .setReferenceFrontDirectory("resources/referenceFrontsCSV")
+	            .setIndicatorList(
+	                Arrays.asList(
+	                        new Epsilon(),
+	                        new Spread(),
+	                        new GenerationalDistance(),
+	                        new PISAHypervolume(),
+	                        new NormalizedHypervolume(),
+	                        new InvertedGenerationalDistance(),
+	                        new InvertedGenerationalDistancePlus()))
+	            .setIndependentRuns(INDEPENDENT_RUNS)
+	            .setNumberOfCores(8)
+	            .build();
+	    new ExecuteAlgorithms<>(experiment).run();
+
+	//    new ComputeQualityIndicators<>(experiment).run();
+//	    new GenerateLatexTablesWithStatistics(experiment).run();
+//	    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+//	    new GenerateFriedmanTestTables<>(experiment).run();
+//	    new GenerateBoxplotsWithR<>(experiment).setRows(2).setColumns(3).run();
+  }
+  
   /**
    * The algorithm list is composed of pairs {@link Algorithm} + {@link Problem} which form part of
    * a {@link ExperimentAlgorithm}, which is a decorator for class {@link Algorithm}. The {@link
@@ -107,7 +147,9 @@ public class NSGAIIStudy {
   static List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> configureAlgorithmList(
       List<ExperimentProblem<IntegerSolution>> problemList) {
     List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithms = new ArrayList<>();
-
+    
+   
+    
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
       for (int i = 0; i < problemList.size(); i++) {
         Algorithm<List<IntegerSolution>> algorithm =
