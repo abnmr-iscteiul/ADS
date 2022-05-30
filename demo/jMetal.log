@@ -2,62 +2,74 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2022-05-28T16:05:37.165750800Z</date>
-  <millis>1653753937165</millis>
-  <nanos>750800</nanos>
+  <date>2022-05-30T18:18:30.670572400Z</date>
+  <millis>1653934710670</millis>
+  <nanos>572400</nanos>
   <sequence>4</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.util.JMetalLogger</class>
   <method>configureLoggers</method>
-  <thread>32</thread>
+  <thread>33</thread>
   <message>Loggers configured with null</message>
 </record>
 <record>
-  <date>2022-05-28T16:05:37.180764100Z</date>
-  <millis>1653753937180</millis>
-  <nanos>764100</nanos>
+  <date>2022-05-30T18:18:30.685586200Z</date>
+  <millis>1653934710685</millis>
+  <nanos>586200</nanos>
   <sequence>5</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms</class>
   <method>run</method>
-  <thread>32</thread>
+  <thread>33</thread>
   <message>ExecuteAlgorithms: Preparing output directory</message>
 </record>
 <record>
-  <date>2022-05-28T16:05:37.189772100Z</date>
-  <millis>1653753937189</millis>
-  <nanos>772100</nanos>
+  <date>2022-05-30T18:18:30.692591800Z</date>
+  <millis>1653934710692</millis>
+  <nanos>591800</nanos>
   <sequence>6</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms</class>
   <method>run</method>
-  <thread>32</thread>
+  <thread>33</thread>
   <message>ExecuteAlgorithms: there are 1 runs pending</message>
 </record>
 <record>
-  <date>2022-05-28T16:05:37.193776300Z</date>
-  <millis>1653753937193</millis>
-  <nanos>776300</nanos>
+  <date>2022-05-30T18:18:30.696595200Z</date>
+  <millis>1653934710696</millis>
+  <nanos>595200</nanos>
   <sequence>7</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm</class>
   <method>runAlgorithm</method>
-  <thread>32</thread>
+  <thread>33</thread>
   <message>Creating base/NSGAIIStudy/data/NSGAIIa/Timetabling</message>
 </record>
 <record>
-  <date>2022-05-28T16:05:37.199782Z</date>
-  <millis>1653753937199</millis>
-  <nanos>782000</nanos>
+  <date>2022-05-30T18:18:30.701600Z</date>
+  <millis>1653934710701</millis>
+  <nanos>600000</nanos>
   <sequence>8</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.lab.experiment.util.ExperimentAlgorithm</class>
   <method>runAlgorithm</method>
-  <thread>32</thread>
+  <thread>33</thread>
   <message> Running algorithm: NSGAIIa, problem: Timetabling, run: 0, funFile: base/NSGAIIStudy/data/NSGAIIa/Timetabling/FUN0.csv</message>
+</record>
+<record>
+  <date>2022-05-30T18:18:34.502589600Z</date>
+  <millis>1653934714502</millis>
+  <nanos>589600</nanos>
+  <sequence>9</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.lab.experiment.component.impl.ExecuteAlgorithms</class>
+  <method>run</method>
+  <thread>33</thread>
+  <message>Algorithm runs finished. Number of tries: 1</message>
 </record>

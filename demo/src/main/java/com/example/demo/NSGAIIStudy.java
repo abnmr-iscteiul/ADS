@@ -1,9 +1,13 @@
+
 package com.example.demo;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -59,43 +63,9 @@ public class NSGAIIStudy {
   private static final int INDEPENDENT_RUNS = 1;
 
   public static void main(String[] args) throws IOException {
-    String experimentBaseDirectory = "base";
-    FileUtils.deleteDirectory(new File("base/NSGAIIStudy/data"));
-    
-    List<ExperimentProblem<IntegerSolution>> problemList = new ArrayList<>();
-   
-   // problemList.add(new ExperimentProblem<>(new Timetabling()));
-
-    List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithmList =
-        configureAlgorithmList(problemList);
-
-    Experiment<IntegerSolution, List<IntegerSolution>> experiment =
-        new ExperimentBuilder<IntegerSolution, List<IntegerSolution>>("NSGAIIStudy")
-            .setAlgorithmList(algorithmList)
-            .setProblemList(problemList)
-            .setExperimentBaseDirectory(experimentBaseDirectory)
-            .setOutputParetoFrontFileName("FUN")
-            .setOutputParetoSetFileName("VAR")
-            .setReferenceFrontDirectory("resources/referenceFrontsCSV")
-            .setIndicatorList(
-                Arrays.asList(
-                        new Epsilon(),
-                        new Spread(),
-                        new GenerationalDistance(),
-                        new PISAHypervolume(),
-                        new NormalizedHypervolume(),
-                        new InvertedGenerationalDistance(),
-                        new InvertedGenerationalDistancePlus()))
-            .setIndependentRuns(INDEPENDENT_RUNS)
-            .setNumberOfCores(8)
-            .build();
-
-    new ExecuteAlgorithms<>(experiment).run();
-    new ComputeQualityIndicators<>(experiment).run();
-//    new GenerateLatexTablesWithStatistics(experiment).run();
-//    new GenerateWilcoxonTestTablesWithR<>(experiment).run();
-//    new GenerateFriedmanTestTables<>(experiment).run();
-//    new GenerateBoxplotsWithR<>(experiment).setRows(2).setColumns(3).run();
+    for (int i = 0; i <100; i++) {
+		System.out.println((int)(Math.random()*26)+1);
+	}
   }
 
   public void executar(List<Aula> aulas) throws IOException{
@@ -147,9 +117,7 @@ public class NSGAIIStudy {
   static List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> configureAlgorithmList(
       List<ExperimentProblem<IntegerSolution>> problemList) {
     List<ExperimentAlgorithm<IntegerSolution, List<IntegerSolution>>> algorithms = new ArrayList<>();
-    
-   
-    
+
     for (int run = 0; run < INDEPENDENT_RUNS; run++) {
       for (int i = 0; i < problemList.size(); i++) {
         Algorithm<List<IntegerSolution>> algorithm =
@@ -159,7 +127,7 @@ public class NSGAIIStudy {
                     new IntegerPolynomialMutation(
                         1.0 / problemList.get(i).getProblem().getNumberOfVariables(), 10.0),
                     100)
-                .setMaxEvaluations(25000)
+                .setMaxEvaluations(250)
                 .build();
         algorithms.add(new ExperimentAlgorithm<>(algorithm, "NSGAIIa", problemList.get(i), run));
       }

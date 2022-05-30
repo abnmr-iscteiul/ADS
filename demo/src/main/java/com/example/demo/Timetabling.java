@@ -23,9 +23,9 @@ public class Timetabling extends AbstractIntegerProblem {
 	public Timetabling(List<Aula> aulas)  {
 		this.aulas=aulas;
 		setNumberOfVariables(aulas.size());
-		setNumberOfObjectives(2);
+		setNumberOfObjectives(3);
 		setName("Timetabling");
-
+		
 		List<Integer> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
 		List<Integer> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
 
@@ -39,37 +39,28 @@ public class Timetabling extends AbstractIntegerProblem {
 
 	/** Evaluate() method */
 	@Override
-	public IntegerSolution evaluate(IntegerSolution solution) { 
-		int penalizar=0;
-		int penalizar2=0;
-		for (int i = 0; i < solution.variables().size(); i++) {
-			int value = solution.variables().get(i);		
-			aulas.get(i).setDia(dia(value));
-			aulas.get(i).setInicio(inicio(value));
-			aulas.get(i).setFim(fim(value));
-			int dia =  (int) Math.ceil(value/26);
-					
-			if(dia%7==0) {
-				penalizar+=1;	
-			}	
-			if (dia > 263)
-				penalizar2+=1;
-		}
-		
-		solution.objectives()[0]=penalizar;
-		solution.objectives()[1]=penalizar2;
-		return solution ;
-	}
+    public IntegerSolution evaluate(IntegerSolution solution) { 
+        int penalizar=0;
+        int penalizar2=0;
+        for (int i = 0; i < solution.variables().size(); i++) {
+            int value = solution.variables().get(i);
+            aulas.get(i).setDia(dia(value));
+            aulas.get(i).setInicio(inicio(value));
+            aulas.get(i).setFim(fim(value));
+            int dia =  (int) Math.ceil(value/26);
 
-	
-	
-	public boolean repetida(Aula aula) {
-		for(int i =0; i<aulas.size();i++)
-			if(aulas.get(i).getCurso()==aula.getCurso())
-				if(aulas.get(i).getInicio()==aula.getInicio())
-					return true;
-		return false;
-	}
+            if(dia%7==0) {
+                penalizar+=1;
+            }
+            if (dia > 263) {
+                penalizar2+=1;
+            }
+
+        }
+        solution.objectives()[0]=penalizar;
+        solution.objectives()[1]=penalizar2;
+        return solution ;
+    }
 	
 	public String dia (int value) {
 		int dia =  (int) Math.ceil(value/26);

@@ -12,12 +12,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.*;
 
 public class CsvImporter {
@@ -80,6 +83,14 @@ public class CsvImporter {
 			printableResults.add(avaliacao.getAvaliacao());
 			NSGAIIStudy study = new NSGAIIStudy();
 			study.executar(aulas);
+			for (int i = 0; i < aulas.size(); i++) {
+				System.out.println(aulas.get(i).getInicio());
+			}
+			
+			//removerDomingos(aulas);
+			//removerAulasNasFerias(aulas);
+			removerAulasErradas(aulas);
+			
 			printCSVFinal(fileNameAulas, aulas, resultado);
 		}
 		
@@ -95,6 +106,158 @@ public class CsvImporter {
 //			 System.out.println(aulas.get(j).getDia()+" "+aulas.get(j).getFim()+" "+aulas.get(j).getCurso());
 		return printableResults;
 	}
+	
+	private static void removerAulasErradas(List<Aula> aulas) {
+		for (int i = 0; i < aulas.size(); i++) {
+			int dia = Integer.parseInt(aulas.get(i).getDia().substring(0, 2));
+			int mes = Integer.parseInt(aulas.get(i).getDia().substring(3, 5));
+			int ano = Integer.parseInt(aulas.get(i).getDia().substring(6, 10));
+			LocalDate data = LocalDate.of(ano, mes, dia);
+			
+			int hora = Integer.parseInt(aulas.get(i).getInicio().substring(0, 2));
+			int minuto = Integer.parseInt(aulas.get(i).getInicio().substring(3, 5));
+			LocalTime tempoInicio = LocalTime.of(hora, minuto);
+			String inicio = aulas.get(i).getInicio();
+			String fim = aulas.get(i).getFim();
+			
+			
+			while(dataErrada(data)) {
+				long minDay = LocalDate.of(2021, 9, 6).toEpochDay();
+			    long maxDay = LocalDate.of(2022, 5, 28).toEpochDay();
+			    long randomDay = ThreadLocalRandom.current().nextLong(minDay, maxDay);
+			    data = LocalDate.ofEpochDay(randomDay);
+			}
+			horaErrada(aulas, aulas.get(i));
+			
+			System.out.println("saiu do while");
+			String year = data.toString().substring(0, 4);
+		    String month = data.toString().substring(5, 7);
+		    String day = data.toString().substring(8, 10);
+			aulas.get(i).setDia(day + "/"+ month + "/" + year);
+			
+		}
+	}
+	
+	private static Boolean dataErrada(LocalDate data) {
+		LocalDate primeiroDiaFerias = LocalDate.of(2022, 05, 28);
+		if (data.getDayOfWeek() == DayOfWeek.SUNDAY || data.isAfter(primeiroDiaFerias)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private static void horaErrada(List<Aula> aulas, Aula aula) {
+			
+		for (int i = 0; i < aulas.size(); i++) {
+			int hora = Integer.parseInt(aula.getInicio().substring(0, 2));
+			int minuto = Integer.parseInt(aula.getInicio().substring(3, 5));
+			LocalTime tempoInicio = LocalTime.of(hora, minuto);
+			String inicio = aula.getInicio();
+			String fim = aula.getFim();
+			
+			int hora2 = Integer.parseInt(aulas.get(i).getInicio().substring(0, 2));
+			int minuto2 = Integer.parseInt(aulas.get(i).getInicio().substring(3, 5));
+			LocalTime tempoInicioOutrasAulas = LocalTime.of(hora2, minuto2);
+			
+			if(aulas.get(i).getCurso() == aula.getCurso()&& aula.getDia()==aulas.get(i).getDia()) {
+				if (tempoInicio == tempoInicioOutrasAulas || tempoInicio == tempoInicioOutrasAulas.plus(Duration.ofMinutes(30)) || tempoInicio == tempoInicioOutrasAulas.plus(Duration.ofMinutes(60))) {
+					while(tempoInicio == tempoInicioOutrasAulas || tempoInicio == tempoInicioOutrasAulas.plus(Duration.ofMinutes(30)) || tempoInicio == tempoInicioOutrasAulas.plus(Duration.ofMinutes(60))) {
+						int randomInt = (int)(Math.random() * (26)) + 1;
+						inicio = inicio(randomInt);
+						fim = fim(randomInt);
+						tempoInicio = LocalTime.of(Integer.parseInt(inicio.substring(0, 2)), Integer.parseInt(inicio.substring(3, 5)));
+					}
+					System.out.println(tempoInicio+"  inicio");
+					System.out.println(tempoInicioOutrasAulas+ " outras");
+					aula.setInicio(inicio);
+					aula.setFim(fim);
+					//horaErrada(aulas, aula);
+				}
+			}
+		}
+	}
+	
+	public static String inicio (int value) {
+		int z=value;
+		while(z>26)
+			z-=26;
+		int hours = (z*30+8*60-30) / 60; 
+		int minutes = (z*30+8*60-30) % 60;
+		
+		if(hours<10&&minutes<10)
+			return "0"+hours+":0"+minutes+":00";
+		if(hours<10)
+			return "0"+hours+":"+minutes+":00";
+		if(minutes<10)
+			return hours+":0"+minutes+":00";
+		return hours+":"+minutes+":00";
+	}
+	
+	
+	public static String fim (int value) {
+		int z=value;
+		while(z>26)
+			z-=26;
+		int hours = (z*30+60+8*60) / 60; 
+		int minutes = (z*30+60+8*60) % 60;
+		
+		if(hours<10&&minutes<10)
+			return "0"+hours+":0"+minutes+":00";
+		if(hours<10)
+			return "0"+hours+":"+minutes+":00";
+		if(minutes<10)
+			return hours+":0"+minutes+":00";
+		return hours+":"+minutes+":00";
+	}
+	
+	/*
+	private static void removerDomingos(List<Aula> aulas) {
+		for (int i = 0; i < aulas.size(); i++) {
+			int dia = Integer.parseInt(aulas.get(i).getDia().substring(0, 2));
+			int mes = Integer.parseInt(aulas.get(i).getDia().substring(3, 5));
+			int ano = Integer.parseInt(aulas.get(i).getDia().substring(6, 10));
+			System.out.println(dia + " " + mes + " " + ano);
+			LocalDate data = LocalDate.of(ano, mes, dia);
+			if (data.getDayOfWeek() == DayOfWeek.SUNDAY) {
+				long minDay = LocalDate.of(2021, 9, 6).toEpochDay();
+			    long maxDay = LocalDate.of(2022, 5, 28).toEpochDay();
+			    long randomDay = ThreadLocalRandom.current().nextLong(minDay, maxDay);
+			    String randomDate = LocalDate.ofEpochDay(randomDay).toString();
+			    String year = randomDate.substring(0, 4);
+			    String month = randomDate.substring(5, 7);
+			    String day = randomDate.substring(8, 10);
+			    System.out.println(day + "/"+ month + "/" + year);
+				aulas.get(i).setDia(day + "/"+ month + "/" + year);
+				removerDomingos(aulas);
+			}
+		}
+	}
+	
+	
+	private static void removerAulasNasFerias(List<Aula> aulas) {
+		for (int i = 0; i < aulas.size(); i++) {
+			int dia = Integer.parseInt(aulas.get(i).getDia().substring(0, 2));
+			int mes = Integer.parseInt(aulas.get(i).getDia().substring(3, 5));
+			int ano = Integer.parseInt(aulas.get(i).getDia().substring(6, 10));
+			System.out.println(dia + " " + mes + " " + ano);
+			LocalDate data = LocalDate.of(ano, mes, dia);
+			LocalDate primeiroDiaFerias = LocalDate.of(2022, 05, 28);
+			if (data.isAfter(primeiroDiaFerias)) {
+				long minDay = LocalDate.of(2021, 9, 6).toEpochDay();
+			    long maxDay = LocalDate.of(2022, 5, 28).toEpochDay();
+			    long randomDay = ThreadLocalRandom.current().nextLong(minDay, maxDay);
+			    String randomDate = LocalDate.ofEpochDay(randomDay).toString();
+			    String year = randomDate.substring(0, 4);
+			    String month = randomDate.substring(5, 7);
+			    String day = randomDate.substring(8, 10);
+			    System.out.println(day + "/"+ month + "/" + year);
+				aulas.get(i).setDia(day + "/"+ month + "/" + year);
+				removerAulasNasFerias(aulas);
+			}
+		}
+	}
+	*/
+
 
 	/**
 	 * Escreve num novo ficheiro CSV a informação original das aulas e a respetiva
